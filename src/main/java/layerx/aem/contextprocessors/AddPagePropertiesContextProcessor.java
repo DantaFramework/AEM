@@ -1,0 +1,153 @@
+/**
+ * LayerX AEM Bundle
+ *
+ * Copyright (C) 2017 Tikal Technologies, Inc. All rights reserved.
+ *
+ * Licensed under GNU Affero General Public License, Version v3.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *      https://www.gnu.org/licenses/agpl-3.0.txt
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied;
+ * without even the implied warranty of MERCHANTABILITY.
+ * See the License for more details.
+ */
+
+package layerx.aem.contextprocessors;
+
+import com.day.cq.tagging.TagManager;
+import com.day.cq.wcm.api.AuthoringUIMode;
+import com.day.cq.wcm.api.Page;
+import com.day.cq.wcm.api.PageManager;
+import com.day.cq.wcm.api.designer.Design;
+import com.day.cq.wcm.api.designer.Designer;
+import com.google.common.collect.Sets;
+import layerx.aem.assets.AssetPathService;
+import layerx.aem.templating.TemplateContentModelImpl;
+import layerx.aem.util.GeneralRequestObjects;
+import layerx.aem.util.PageUtils;
+import layerx.api.ExecutionContext;
+import layerx.api.configuration.Configuration;
+import layerx.api.configuration.Mode;
+import layerx.api.exceptions.ProcessException;
+import layerx.core.contextprocessors.AbstractCheckComponentCategoryContextProcessor;
+import org.apache.commons.lang3.StringUtils;
+import org.apache.felix.scr.annotations.*;
+import org.apache.sling.api.SlingHttpServletRequest;
+import org.apache.sling.api.resource.Resource;
+import org.apache.sling.api.resource.ResourceResolver;
+
+import javax.jcr.Node;
+import java.util.Collection;
+import java.util.Map;
+import java.util.Set;
+
+import static layerx.Constants.*;
+import static layerx.aem.Constants.JCR_DESCRIPTION;
+import static layerx.aem.Constants.SLING_HTTP_REQUEST;
+import static layerx.aem.util.PropertyUtils.propsToMap;
+import static layerx.core.Constants.XK_CONTAINER_CLASSES_CP;
+
+/**
+ * The context processor for adding page properties to content model
+ *
+ * @author      joshuaoransky
+ * @version     1.0.0
+ * @since       2014-09-04
+ */
+@Component
+@Service
+public class AddPagePropertiesContextProcessor
+        extends AbstractCheckComponentCategoryContextProcessor<TemplateContentModelImpl> {
+
+    @Reference(cardinality = ReferenceCardinality.MANDATORY_UNARY, policy = ReferencePolicy.STATIC)
+    protected AssetPathService assetPathService;
+
+    @Override
+    public Set<String> anyOf() {
+        return Sets.newHashSet(PAGE_CATEGORY);
+    }
+
+    @Override
+    public int priority() {
+        // This processor must be one of the first processors executed.
+        return HIGHEST_PRIORITY;
+    }
+
+    /**
+     * @param executionContext
+     * @param contentModel
+     * @throws Exception
+     */
+    @Override
+    public void process(final ExecutionContext executionContext, final TemplateContentModelImpl contentModel)
+            throws ProcessException {
+        try {
+            SlingHttpServletRequest request = (SlingHttpServletRequest) executionContext.get(SLING_HTTP_REQUEST);
+            Resource resource = request.getResource();
+            log.debug("for {}", resource.getPath());
+            if (resource != null) {
+                ResourceResolver resourceResolver = request.getResourceResolver();
+                Designer designer = resourceResolver.adaptTo(Designer.class);
+                final PageManager pageManager = resourceResolver.adaptTo(PageManager.class);
+                final TagManager tm = (TagManager) resource.getResourceResolver().adaptTo(TagManager.class);
+                Page page = pageManager.getContainingPage(resource);
+                if (page != null) {
+                    if (!contentModel.has(PAGE_PROPERTIES_KEY)) {
+                        Configuration configuration = configurationProvider.getFor(page.getContentResource().getResourceType());
+                        Collection<String> bodyClasses = configuration.asStrings(XK_CONTAINER_CLASSES_CP, Mode.MERGE);
+                        Node pageContentNode = page.getContentResource().adaptTo(Node.class);
+                        Map<String, Object> pageContent = propsToMap(pageContentNode.getProperties(), false);
+                        pageContent.put(PATH, page.getPath());
+                        pageContent.put(PAGE_NAME, page.getName());
+                        pageContent.put(LINK, page.getPath() + HTML_EXT);
+                        pageContent.put(BODY_CLASSES, bodyClasses);
+                        pageContent.put(TITLE, page.getTitle());
+                        pageContent.put(DESCRIPTION, page.getProperties().get(JCR_DESCRIPTION, ""));
+                        pageContent.put(PAGE_TITLE, page.getProperties().get(PAGE_TITLE, ""));
+                        pageContent.put(SUBTITLE, page.getProperties().get(SUBTITLE, ""));
+                        pageContent.put(HIDE_IN_NAV, page.getProperties().get(HIDE_IN_NAV, ""));
+                        pageContent.put(KEYWORDS, PageUtils.getKeywords(pageContent, tm));
+                        pageContent.put(TAGS, PageUtils.getTags(pageContent));
+                        pageContent.put(WCM_MODE, GeneralRequestObjects.getWCMModeString(request));
+                        pageContent.put(IS_EDIT_MODE, GeneralRequestObjects.isEditMode(request));
+                        pageContent.put(IS_DESIGN_MODE, GeneralRequestObjects.isDesignMode(request));
+                        pageContent.put(IS_EDIT_OR_DESIGN_MODE, GeneralRequestObjects.isEditOrDesignMode(request));
+
+                        if (designer != null) {
+                            Design design = designer.getDesign(page);
+                            if (design != null && design.getPath() != null) {
+                                pageContent.put(FAVICON, design.getPath() + "/" + FAVICON + ICO_EXT);
+                            }
+                        }
+
+                        String navigationTitle = PageUtils.getNavigationTitle(page);
+                        if (null != navigationTitle) {
+                            pageContent.put(NAVIGATION_TITLE, PageUtils.getNavigationTitle(page));
+                        }
+                        // add transformed path image
+                        String pageImagePath = assetPathService.getPageImagePath(page, page.getContentResource());
+                        if(StringUtils.isNotEmpty(pageImagePath)){
+                            pageContent.put(IMAGE_PATH, pageImagePath);
+                        }
+
+                        // add interface mode
+                        if (AuthoringUIMode.fromRequest(request) == AuthoringUIMode.TOUCH) {
+                            pageContent.put(IS_TOUCH_UI_MODE, true);
+                            pageContent.put(IS_CLASSIC_UI_MODE, false);
+                        } else {
+                            pageContent.put(IS_CLASSIC_UI_MODE, true);
+                            pageContent.put(IS_TOUCH_UI_MODE, false);
+                        }
+                        contentModel.set(PAGE_PROPERTIES_KEY, pageContent);
+                    }
+                }
+            }
+        } catch (Exception e) {
+            throw new ProcessException(e);
+        }
+    }
+}

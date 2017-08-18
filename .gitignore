@@ -1,0 +1,17 @@
+*.class
+.DS_Store
+.settings
+.nbproject
+.project
+
+# Package Files #
+*.jar
+*.war
+*.ear
+
+#Intellij files:
+.idea/
+*.iml
+*.iws
+
+target/
