@@ -29,3 +29,8 @@ Read [here](CONTRIBUTING.md) for more information.
 ## Deploy to AEM
 
     mvn clean install -Pdeploy-aem
+    
+## Credit
+
+Special thanks to Jose Alvarez, who named Danta for the powerful ancient Mayan pyramid, La Danta. 
+La Danta is the largest pyramid in El Mirador—the biggest Mayan city found in Petén, Guatemala.
