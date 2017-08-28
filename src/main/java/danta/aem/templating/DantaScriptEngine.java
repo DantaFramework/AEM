@@ -72,13 +72,13 @@ public class DantaScriptEngine
     private DOMProcessorEngine domProcessorEngine;
     private HelperFunctionBind helperFunctionBind;
 
-    public DantaScriptEngine(DantaScriptEngineFactory layerXScriptEngineFactory,
+    public DantaScriptEngine(DantaScriptEngineFactory dantaScriptEngineFactory,
                               ContextProcessorEngine contextProcessorEngine,
                               ConfigurationProvider configurationProvider,
                               ResourceResolverFactory resourceResolverFactory,
                               DOMProcessorEngine domProcessorEngine,
                               HelperFunctionBind helperFunctionBind) {
-        super(layerXScriptEngineFactory);
+        super(dantaScriptEngineFactory);
         this.configurationProvider = configurationProvider;
         this.resourceResolverFactory = resourceResolverFactory;
         this.contextProcessorEngine = contextProcessorEngine;
