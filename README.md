@@ -4,7 +4,7 @@ Danta - AEM Project is the maven project contained source codes specifically for
 
 ## Documentation
 
- * Read our [official documentation](https://danta.tikaltechnologies.io/) for more information.
+ * Read our [official documentation](http://danta.tikaltechnologies.io/docs) for more information.
 
 ## Prerequisites
 
