@@ -4,13 +4,13 @@ Danta - AEM Project is the maven project contained source codes specifically for
 
 ## Documentation
 
- * Read our [official documentation](https://danta.tikaltechnologies.io/) for more information.
+ * Read our [official documentation](http://danta.tikaltechnologies.io) for more information.
 
 ## Prerequisites
 
- * [Danta - Parent Project](https://github.com/DataFramework/Parent)
- * [Danta - API Project](https://github.com/DataFramework/API)
- * [Danta - Core Project](https://github.com/DataFramework/Core)
+ * [Danta - Parent Project](https://github.com/DantaFramework/Parent)
+ * [Danta - API Project](https://github.com/DantaFramework/API)
+ * [Danta - Core Project](https://github.com/DantaFramework/Core)
  * Java 8
  * AEM 6.2 or later (for integration with AEM)
 
