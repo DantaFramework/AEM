@@ -1,5 +1,7 @@
 # Danta - AEM Project
 
+Danta is the agnostic multi-platform templating engine. enables developers and IT teams to use technologies they already know, expediting the creation and leveraging of reusable technical assets.
+
 Danta - AEM Project is the maven project contained source codes specifically for AEM.
 
 ## Documentation
