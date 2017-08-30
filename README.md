@@ -10,6 +10,7 @@ Danta - AEM Project is the maven project contained source codes specifically for
 
 ## Prerequisites
 
+ * [ACS AEM Commons 3.10.0](https://github.com/Adobe-Consulting-Services/acs-aem-commons/releases/tag/acs-aem-commons-3.10.0)
  * [Danta - Parent Project](https://github.com/DantaFramework/Parent)
  * [Danta - API Project](https://github.com/DantaFramework/API)
  * [Danta - Core Project](https://github.com/DantaFramework/Core)
