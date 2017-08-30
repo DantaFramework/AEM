@@ -68,46 +68,6 @@
             </plugin>
         </plugins>
     </build>
-    <profiles>
-        <profile>
-            <id>stringer</id>
-            <activation>
-                <activeByDefault>false</activeByDefault>
-            </activation>
-            <build>
-                <plugins>
-                    <plugin>
-                        <groupId>com.licel</groupId>
-                        <artifactId>stringer-maven-plugin</artifactId>
-                        <executions>
-                            <execution>
-                                <phase>package</phase>
-                                <goals>
-                                    <goal>stringer</goal>
-                                </goals>
-                                <configuration>
-                                    <verbose>true</verbose>
-                                    <checkCaller>true</checkCaller>
-                                    <integrityProtection>true</integrityProtection>
-                                    <checkJar>false</checkJar>
-                                    <resourceEncryption>true</resourceEncryption>
-                                    <optimize>true</optimize>
-                                    <osgiCompatibility>true</osgiCompatibility>
-                                    <includes>
-                                        <include>danta/**</include>
-                                    </includes>
-                                    <excludes>
-                                        <exclude>danta/aem/contextprocessors/lists/**</exclude>
-                                        <exclude>danta/aem/contextprocessors/images/**</exclude>
-                                    </excludes>
-                                </configuration>
-                            </execution>
-                        </executions>
-                    </plugin>
-                </plugins>
-            </build>
-        </profile>
-    </profiles>
     <dependencies>
         <!-- danta -->
         <dependency>
