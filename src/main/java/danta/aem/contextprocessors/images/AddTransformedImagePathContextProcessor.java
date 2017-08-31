@@ -28,6 +28,7 @@ import org.apache.felix.scr.annotations.Reference;
 import org.apache.felix.scr.annotations.Service;
 import org.apache.sling.api.SlingHttpServletRequest;
 
+import java.util.Collections;
 import java.util.Set;
 
 import static danta.Constants.*;
@@ -45,12 +46,14 @@ import static danta.aem.Constants.SLING_HTTP_REQUEST;
 public class AddTransformedImagePathContextProcessor
         extends AbstractImageContextProcessor<TemplateContentModel> {
 
+    private static final Set<String> ANY_OF = Collections.unmodifiableSet(Sets.newHashSet(CONTENT_IMAGE_CATEGORY));
+
     @Reference
     AssetPathService assetPathService;
 
     @Override
     public Set<String> anyOf() {
-        return Sets.newHashSet(CONTENT_IMAGE_CATEGORY);
+        return ANY_OF;
     }
 
     @Override

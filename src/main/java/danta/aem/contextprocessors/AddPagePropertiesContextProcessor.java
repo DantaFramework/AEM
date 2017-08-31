@@ -42,6 +42,7 @@ import org.apache.sling.api.resource.ResourceResolver;
 
 import javax.jcr.Node;
 import java.util.Collection;
+import java.util.Collections;
 import java.util.Map;
 import java.util.Set;
 
@@ -63,12 +64,14 @@ import static danta.core.Constants.XK_CONTAINER_CLASSES_CP;
 public class AddPagePropertiesContextProcessor
         extends AbstractCheckComponentCategoryContextProcessor<TemplateContentModelImpl> {
 
+    private static final Set<String> ANY_OF = Collections.unmodifiableSet(Sets.newHashSet(PAGE_CATEGORY));
+
     @Reference(cardinality = ReferenceCardinality.MANDATORY_UNARY, policy = ReferencePolicy.STATIC)
     protected AssetPathService assetPathService;
 
     @Override
     public Set<String> anyOf() {
-        return Sets.newHashSet(PAGE_CATEGORY);
+        return ANY_OF;
     }
 
     @Override

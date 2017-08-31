@@ -31,6 +31,7 @@ import org.apache.sling.api.SlingHttpServletRequest;
 import org.apache.sling.api.resource.Resource;
 import org.apache.sling.api.resource.ResourceResolver;
 
+import java.util.Collections;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Set;
@@ -50,9 +51,11 @@ import static danta.aem.Constants.SLING_HTTP_REQUEST;
 public class AddGlobalPropertiesContextProcessor
         extends AbstractCheckComponentCategoryContextProcessor<TemplateContentModelImpl> {
 
+    private static final Set<String> ANY_OF = Collections.unmodifiableSet(Sets.newHashSet(GLOBAL_CATEGORY));
+
     @Override
     public Set<String> anyOf() {
-        return Sets.newHashSet(GLOBAL_CATEGORY);
+        return ANY_OF;
     }
 
     @Override

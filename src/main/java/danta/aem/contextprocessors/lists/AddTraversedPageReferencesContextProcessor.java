@@ -35,6 +35,7 @@ import org.apache.sling.api.resource.ResourceResolver;
 
 import java.util.ArrayList;
 import java.util.Collection;
+import java.util.Collections;
 import java.util.Map;
 import java.util.Set;
 
@@ -53,11 +54,13 @@ import static danta.aem.Constants.SLING_HTTP_REQUEST;
 public class AddTraversedPageReferencesContextProcessor
         extends AbstractItemListContextProcessor<TemplateContentModel> {
 
+    private static final Set<String> ALL_OF = Collections.unmodifiableSet(Sets.newHashSet(TRAVERSED_LIST_CATEGORY));
+
     protected static final int PRIORITY = AddItemListContextProcessor.PRIORITY - 20;
 
     @Override
     public Set<String> allOf() {
-        return Sets.newHashSet(TRAVERSED_LIST_CATEGORY);
+        return ALL_OF;
     }
 
     @Override

@@ -30,6 +30,7 @@ import org.apache.sling.api.SlingHttpServletRequest;
 import org.apache.sling.api.resource.Resource;
 
 import javax.jcr.Node;
+import java.util.Collections;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Set;
@@ -50,9 +51,11 @@ import static danta.core.Constants.XK_CONTENT_ID_CP;
 public class AddBasicResourcePropertiesContextProcessor
         extends AbstractCheckComponentCategoryContextProcessor<TemplateContentModelImpl> {
 
+    private static final Set<String> ANY_OF = Collections.unmodifiableSet(Sets.newHashSet(CONTENT_CATEGORY));
+
     @Override
     public Set<String> anyOf() {
-        return Sets.newHashSet(CONTENT_CATEGORY);
+        return ANY_OF;
     }
 
     @Override

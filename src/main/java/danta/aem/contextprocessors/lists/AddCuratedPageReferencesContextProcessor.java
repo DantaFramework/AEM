@@ -28,6 +28,7 @@ import org.apache.felix.scr.annotations.Service;
 
 import java.util.ArrayList;
 import java.util.Collection;
+import java.util.Collections;
 import java.util.Map;
 import java.util.Set;
 
@@ -45,11 +46,14 @@ import static danta.Constants.*;
 public class AddCuratedPageReferencesContextProcessor
         extends AbstractItemListContextProcessor<TemplateContentModel> {
 
+    private static final Set<String> ALL_OF =
+            Collections.unmodifiableSet(Sets.newHashSet(LIST_CATEGORY, CURATED_LIST_CATEGORY));
+
     public static final int PRIORITY = AddItemListContextProcessor.PRIORITY - 20;
 
     @Override
     public Set<String> allOf() {
-        return Sets.newHashSet(LIST_CATEGORY, CURATED_LIST_CATEGORY);
+        return ALL_OF;
     }
 
     @Override

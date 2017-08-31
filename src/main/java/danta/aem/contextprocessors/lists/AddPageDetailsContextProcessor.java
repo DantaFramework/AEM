@@ -49,16 +49,20 @@ import static danta.aem.Constants.SLING_HTTP_REQUEST;
 public class AddPageDetailsContextProcessor
         extends AbstractPageDetailsContextProcessor {
 
+    private static final Set<String> ALL_OF = Collections.unmodifiableSet(Sets.newHashSet(PAGE_DETAILS_CATEGORY));
+    private static final Set<String> ANY_OF =
+            Collections.unmodifiableSet(Sets.newHashSet(CURATED_LIST_CATEGORY, TRAVERSED_LIST_CATEGORY));
+
     protected static final int PRIORITY = AddCuratedPageReferencesContextProcessor.PRIORITY - 20;
 
     @Override
     public Set<String> allOf() {
-        return Sets.newHashSet(PAGE_DETAILS_CATEGORY);
+        return ALL_OF;
     }
 
     @Override
     public Set<String> anyOf() {
-        return Sets.newHashSet(CURATED_LIST_CATEGORY, TRAVERSED_LIST_CATEGORY);
+        return ANY_OF;
     }
 
     @Override
