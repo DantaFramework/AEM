@@ -198,19 +198,6 @@
             <artifactId>cq-content-sync</artifactId>
             <version>5.6.4</version>
         </dependency>
-        <dependency>
-            <groupId>com.day.cq</groupId>
-            <artifactId>cq-commons</artifactId>
-            <version>5.9.22</version>
-            <scope>provided</scope>
-        </dependency>
-        <!-- adobe -->
-        <dependency>
-            <groupId>com.adobe.granite</groupId>
-            <artifactId>com.adobe.granite.ui.clientlibs</artifactId>
-            <version>1.0.52</version>
-            <scope>provided</scope>
-        </dependency>
         <!-- jackrabbit -->
         <dependency>
             <groupId>org.apache.jackrabbit</groupId>
