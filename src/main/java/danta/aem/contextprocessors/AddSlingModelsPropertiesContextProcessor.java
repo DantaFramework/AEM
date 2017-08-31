@@ -35,7 +35,14 @@ import org.apache.sling.models.factory.ModelFactory;
 
 import java.beans.IntrospectionException;
 import java.beans.Introspector;
-import java.util.*;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Collection;
+import java.util.Collections;
+import java.util.HashMap;
+import java.util.Map;
+import java.util.Objects;
+import java.util.Set;
 
 import static danta.Constants.DOT;
 import static danta.Constants.HIGHEST_PRIORITY;
