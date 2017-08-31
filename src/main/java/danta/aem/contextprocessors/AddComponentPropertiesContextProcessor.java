@@ -35,6 +35,7 @@ import org.apache.sling.api.resource.ResourceResolver;
 import org.apache.sling.api.resource.ResourceResolverFactory;
 
 import javax.jcr.Node;
+import java.util.Collections;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Set;
@@ -55,14 +56,16 @@ import static danta.core.util.ObjectUtils.wrap;
 public class AddComponentPropertiesContextProcessor
         extends AbstractCheckComponentCategoryContextProcessor<TemplateContentModelImpl> {
 
-    @Reference(cardinality = ReferenceCardinality.MANDATORY_UNARY, policy = ReferencePolicy.STATIC)
-    private ResourceResolverFactory resourceResolverFactory;
+    private static final Set<String> ANY_OF = Collections.unmodifiableSet(Sets.newHashSet(COMPONENT_CATEGORY));
 
     private static final String CONFIG_SERVICE = "config-service";
 
+    @Reference(cardinality = ReferenceCardinality.MANDATORY_UNARY, policy = ReferencePolicy.STATIC)
+    private ResourceResolverFactory resourceResolverFactory;
+
     @Override
     public Set<String> anyOf() {
-        return Sets.newHashSet(COMPONENT_CATEGORY);
+        return ANY_OF;
     }
 
     @Override

@@ -56,13 +56,15 @@ import static danta.aem.Constants.*;
 public class AddSlingModelsPropertiesContextProcessor
         extends AbstractCheckComponentCategoryContextProcessor<TemplateContentModel> {
 
-    @Override
-    public Set<String> anyOf() {
-        return Sets.newHashSet(SLING_MODELS_CATEGORY);
-    }
+    private static final Set<String> ANY_OF = Collections.unmodifiableSet(Sets.newHashSet(SLING_MODELS_CATEGORY));
 
     @Reference
-    private ModelFactory modelFactory = null;
+    private ModelFactory modelFactory;
+
+    @Override
+    public Set<String> anyOf() {
+        return ANY_OF;
+    }
 
     @Override
     public int priority() {

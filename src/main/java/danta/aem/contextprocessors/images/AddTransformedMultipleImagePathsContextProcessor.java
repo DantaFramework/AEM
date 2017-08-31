@@ -32,6 +32,7 @@ import org.apache.sling.api.resource.Resource;
 
 import java.util.ArrayList;
 import java.util.Collection;
+import java.util.Collections;
 import java.util.Set;
 
 import static danta.Constants.*;
@@ -49,12 +50,14 @@ import static danta.aem.Constants.SLING_HTTP_REQUEST;
 public class AddTransformedMultipleImagePathsContextProcessor
         extends AbstractImageContextProcessor<TemplateContentModel> {
 
+    private static final Set<String> ANY_OF = Collections.unmodifiableSet(Sets.newHashSet(MULTIPLE_IMAGE_CATEGORY));
+
     @Reference
     AssetPathService assetPathService;
 
     @Override
     public Set<String> anyOf() {
-        return Sets.newHashSet(MULTIPLE_IMAGE_CATEGORY);
+        return ANY_OF;
     }
 
     @Override

@@ -31,6 +31,7 @@ import org.apache.felix.scr.annotations.Service;
 import org.apache.sling.api.SlingHttpServletRequest;
 
 import java.util.Collection;
+import java.util.Collections;
 import java.util.Set;
 
 import static danta.Constants.COMPONENT_CATEGORY;
@@ -76,9 +77,11 @@ import static danta.core.Constants.XK_DESERIALIZE_JSON_PROPS_CP;
 public class DeserializeJSONPropertyValuesContextProcessor
         extends AbstractCheckComponentCategoryContextProcessor<TemplateContentModelImpl> {
 
+    private static final Set<String> ANY_OF = Collections.unmodifiableSet(Sets.newHashSet(COMPONENT_CATEGORY));
+
     @Override
     public Set<String> anyOf() {
-        return Sets.newHashSet(COMPONENT_CATEGORY);
+        return ANY_OF;
     }
 
     @Override

@@ -24,6 +24,7 @@ import danta.core.contextprocessors.AbstractCheckComponentCategoryContextProcess
 import org.apache.felix.scr.annotations.Component;
 import org.apache.felix.scr.annotations.Service;
 
+import java.util.Collections;
 import java.util.Set;
 
 import static danta.Constants.IMAGE_CATEGORY;
@@ -41,8 +42,10 @@ public abstract class AbstractImageContextProcessor<C extends ContentModel>
         extends AbstractCheckComponentCategoryContextProcessor<C>
         implements ImageContextProcessor<C> {
 
+    private static final Set<String> ANY_OF = Collections.unmodifiableSet(Sets.newHashSet(IMAGE_CATEGORY));
+
     @Override
     public Set<String> anyOf() {
-        return Sets.newHashSet(IMAGE_CATEGORY);
+        return ANY_OF;
     }
 }
