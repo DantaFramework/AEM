@@ -25,6 +25,7 @@ import danta.core.util.NumberUtils;
 import org.apache.felix.scr.annotations.Component;
 import org.apache.felix.scr.annotations.Service;
 
+import java.util.Collections;
 import java.util.Set;
 
 import static danta.Constants.HIGHER_PRIORITY;
@@ -43,11 +44,13 @@ public abstract class AbstractItemListContextProcessor<C extends ContentModel>
         extends AbstractCheckComponentCategoryContextProcessor<C>
         implements ListContextProcessor<C> {
 
+    private static final Set<String> ANY_OF = Collections.unmodifiableSet(Sets.newHashSet(LIST_CATEGORY));
+
     protected static final int PRIORITY = NumberUtils.nextPrime(HIGHER_PRIORITY - 20);
 
     @Override
     public Set<String> anyOf() {
-        return Sets.newHashSet(LIST_CATEGORY);
+        return ANY_OF;
     }
 
     @Override

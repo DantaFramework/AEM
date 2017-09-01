@@ -35,7 +35,14 @@ import org.apache.sling.models.factory.ModelFactory;
 
 import java.beans.IntrospectionException;
 import java.beans.Introspector;
-import java.util.*;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Collection;
+import java.util.Collections;
+import java.util.HashMap;
+import java.util.Map;
+import java.util.Objects;
+import java.util.Set;
 
 import static danta.Constants.DOT;
 import static danta.Constants.HIGHEST_PRIORITY;
@@ -56,13 +63,15 @@ import static danta.aem.Constants.*;
 public class AddSlingModelsPropertiesContextProcessor
         extends AbstractCheckComponentCategoryContextProcessor<TemplateContentModel> {
 
-    @Override
-    public Set<String> anyOf() {
-        return Sets.newHashSet(SLING_MODELS_CATEGORY);
-    }
+    private static final Set<String> ANY_OF = Collections.unmodifiableSet(Sets.newHashSet(SLING_MODELS_CATEGORY));
 
     @Reference
-    private ModelFactory modelFactory = null;
+    private ModelFactory modelFactory;
+
+    @Override
+    public Set<String> anyOf() {
+        return ANY_OF;
+    }
 
     @Override
     public int priority() {

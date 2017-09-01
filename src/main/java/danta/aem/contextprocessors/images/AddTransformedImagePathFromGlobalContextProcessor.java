@@ -30,6 +30,7 @@ import org.apache.felix.scr.annotations.Service;
 import org.apache.sling.api.SlingHttpServletRequest;
 import org.apache.sling.api.resource.Resource;
 
+import java.util.Collections;
 import java.util.Set;
 
 import static danta.Constants.*;
@@ -48,7 +49,9 @@ import static danta.aem.Constants.SLING_HTTP_REQUEST;
 public class AddTransformedImagePathFromGlobalContextProcessor
         extends AbstractImageContextProcessor<TemplateContentModel> {
 
-    public static final String CONFIG_GLOBAL_IMAGE_KEY = CONFIG_PROPERTIES_KEY + DOT + "xk_globalImagePath";
+    private static final Set<String> ANY_OF = Collections.unmodifiableSet(Sets.newHashSet(GLOBAL_IMAGE_CATEGORY));
+
+    private static final String CONFIG_GLOBAL_IMAGE_KEY = CONFIG_PROPERTIES_KEY + DOT + "xk_globalImagePath";
     private static final String COMPONENT_GLOBAL_DIALOG_PATH = COMPONENT_PROPERTIES_KEY + DOT + GLOBAL_PATH_PROPERTY_KEY;
 
     @Reference
@@ -56,7 +59,7 @@ public class AddTransformedImagePathFromGlobalContextProcessor
 
     @Override
     public Set<String> anyOf() {
-        return Sets.newHashSet(GLOBAL_IMAGE_CATEGORY);
+        return ANY_OF;
     }
 
     @Override

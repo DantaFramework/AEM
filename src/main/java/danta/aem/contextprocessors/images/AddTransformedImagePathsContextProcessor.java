@@ -31,6 +31,7 @@ import org.apache.felix.scr.annotations.Service;
 import org.apache.sling.api.SlingHttpServletRequest;
 import org.apache.sling.api.resource.Resource;
 
+import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -54,12 +55,14 @@ import static org.apache.jackrabbit.JcrConstants.NT_UNSTRUCTURED;
 public class AddTransformedImagePathsContextProcessor
         extends AbstractImageContextProcessor<TemplateContentModel> {
 
+    private static final Set<String> ANY_OF = Collections.unmodifiableSet(Sets.newHashSet(IMAGES_BY_KEY_CATEGORY));
+
     @Reference
     AssetPathService assetPathService;
 
     @Override
     public Set<String> anyOf() {
-        return Sets.newHashSet(IMAGES_BY_KEY_CATEGORY);
+        return ANY_OF;
     }
 
     private final Predicate<Resource> IMAGE_RESOURCES_PREDICATE = new Predicate<Resource>() {

@@ -32,6 +32,7 @@ import org.apache.sling.api.SlingHttpServletRequest;
 import org.apache.sling.api.resource.Resource;
 import org.apache.sling.api.resource.ResourceResolver;
 
+import java.util.Collections;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Set;
@@ -52,9 +53,11 @@ import static danta.aem.Constants.SLING_HTTP_REQUEST;
 public class AddDesignPropertiesContextProcessor
         extends AbstractCheckComponentCategoryContextProcessor<TemplateContentModelImpl>  {
 
+    private static final Set<String> ANY_OF = Collections.unmodifiableSet(Sets.newHashSet(DESIGN_CATEGORY));
+
     @Override
     public Set<String> anyOf() {
-        return Sets.newHashSet(DESIGN_CATEGORY);
+        return ANY_OF;
     }
 
     @Override
