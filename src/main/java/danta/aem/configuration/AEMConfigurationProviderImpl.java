@@ -68,7 +68,11 @@ public class AEMConfigurationProviderImpl
     private ResourceResolverFactory resourceResolverFactory;
 
     private static final Mode DEFAULT_MODE = Mode.INHERIT; // TODO: Make configurable
+
     private static final String CONFIG_SERVICE = "config-service";
+    private static final Map<String, Object> RESOURCE_RESOLVER_PARAMS =
+            Collections.unmodifiableMap(Collections.singletonMap(ResourceResolverFactory.SUBSERVICE, CONFIG_SERVICE));
+
 
     /**
      * Check if the given resource type has configuration
@@ -81,9 +85,7 @@ public class AEMConfigurationProviderImpl
     public boolean hasConfig(String resourceType)
             throws Exception {
         boolean hasConfigNode = false;
-        Map<String, Object> authenticationInfo = new HashMap<String, Object>();
-        authenticationInfo.put(ResourceResolverFactory.SUBSERVICE, CONFIG_SERVICE);
-        ResourceResolver resourceResolver = resourceResolverFactory.getServiceResourceResolver(authenticationInfo);
+        ResourceResolver resourceResolver = resourceResolverFactory.getServiceResourceResolver(RESOURCE_RESOLVER_PARAMS);
 
         ComponentManager componentManager = resourceResolver.adaptTo(ComponentManager.class);
         com.day.cq.wcm.api.components.Component component = componentManager.getComponent(resourceType);
@@ -130,9 +132,7 @@ public class AEMConfigurationProviderImpl
 
         private ConfigurationImpl(String resourceType)
                 throws Exception {
-            Map<String, Object> authenticationInfo = new HashMap<String, Object>();
-            authenticationInfo.put(ResourceResolverFactory.SUBSERVICE, CONFIG_SERVICE);
-            resourceResolver = resourceResolverFactory.getServiceResourceResolver(authenticationInfo);
+            resourceResolver = resourceResolverFactory.getServiceResourceResolver(RESOURCE_RESOLVER_PARAMS);
 
             componentManager = resourceResolver.adaptTo(ComponentManager.class);
             component = componentManager.getComponent(resourceType);
@@ -466,9 +466,7 @@ public class AEMConfigurationProviderImpl
     public void onEvent(EventIterator eventIterator) {
         ResourceResolver resourceResolver = null;
         try {
-            Map<String, Object> authenticationInfo = new HashMap<String, Object>();
-            authenticationInfo.put(ResourceResolverFactory.SUBSERVICE, CONFIG_SERVICE);
-            resourceResolver = resourceResolverFactory.getServiceResourceResolver(authenticationInfo);
+            resourceResolver = resourceResolverFactory.getServiceResourceResolver(RESOURCE_RESOLVER_PARAMS);
 
             ComponentManager componentManager = resourceResolver.adaptTo(ComponentManager.class);
             if (resourceResolver != null) {
