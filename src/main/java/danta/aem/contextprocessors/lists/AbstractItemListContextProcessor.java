@@ -45,6 +45,7 @@ public abstract class AbstractItemListContextProcessor<C extends ContentModel>
 
     private static final Set<String> ANY_OF = Collections.unmodifiableSet(Sets.newHashSet(LIST_CATEGORY));
 
+
     protected static final int PRIORITY = HIGHER_PRIORITY - 19;
 
     @Override
