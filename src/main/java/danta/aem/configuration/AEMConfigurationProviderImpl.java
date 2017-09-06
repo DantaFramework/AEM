@@ -64,11 +64,18 @@ public class AEMConfigurationProviderImpl
 
     protected final Logger log = LoggerFactory.getLogger(this.getClass());
 
+    private static final Mode DEFAULT_MODE = Mode.INHERIT; // TODO: Make configurable
+    private static final String CONFIG_SERVICE = "config-service";
+
     @Reference(cardinality = ReferenceCardinality.MANDATORY_UNARY, policy = ReferencePolicy.STATIC)
     private ResourceResolverFactory resourceResolverFactory;
 
-    private static final Mode DEFAULT_MODE = Mode.INHERIT; // TODO: Make configurable
-    private static final String CONFIG_SERVICE = "config-service";
+    @Reference
+    private SlingRepository repository;
+
+    private Session session;
+    private ObservationManager observationManager;
+    private final Map<String, Map<String, Map<String, InertProperty>>> configCache = new HashMap<>();
 
     /**
      * Check if the given resource type has configuration
@@ -112,16 +119,106 @@ public class AEMConfigurationProviderImpl
         return new ConfigurationImpl(resourceType);
     }
 
-    @Reference
-    private SlingRepository repository;
+    /**
+     * Trigger on event
+     *
+     * @param eventIterator The event iterator object
+     */
+    @Override
+    public void onEvent(EventIterator eventIterator) {
+        ResourceResolver resourceResolver = null;
+        try {
+            Map<String, Object> authenticationInfo = new HashMap<String, Object>();
+            authenticationInfo.put(ResourceResolverFactory.SUBSERVICE, CONFIG_SERVICE);
+            resourceResolver = resourceResolverFactory.getServiceResourceResolver(authenticationInfo);
 
-    private final Map<String, Map<String, Map<String, InertProperty>>> configCache = new HashMap<>();
+            ComponentManager componentManager = resourceResolver.adaptTo(ComponentManager.class);
+            if (resourceResolver != null) {
+                while (eventIterator.hasNext()) {
+                    Event event = eventIterator.nextEvent();
+                    String path = event.getPath();
+                    switch (event.getType()) {
+                        case Event.PROPERTY_REMOVED:
+                        case Event.NODE_REMOVED:
+                        case Event.PROPERTY_CHANGED:
+                        case Event.PROPERTY_ADDED:
+                            path = path.substring(0, path.lastIndexOf('/'));
+                            break;
+                        case Event.NODE_MOVED:
+                            path = event.getInfo().get("srcChildRelPath").toString();
+                            break;
+                        case Event.NODE_ADDED:
+                        default:
+                    }
+                    Resource resource = resourceResolver.getResource(path);
+                    if (resource != null) {
+                        com.day.cq.wcm.api.components.Component component = ResourceUtils.findContainingComponent(resource);
+                        if (component != null) {
+                            configCache.clear();
+                        }
+                    }
+                }
+            }
+        } catch (Exception ew) {
+            log.error(ERROR, ew);
+        } finally {
+            if (resourceResolver != null)
+                resourceResolver.close();
+        }
+    }
+
+    /**
+     * Component activator
+     *
+     * @param componentContext The component context
+     * @throws Exception
+     */
+    @Activate
+    protected void activate(ComponentContext componentContext)
+            throws Exception {
+        session = repository.loginService(CONFIG_SERVICE, null);
+        observationManager = session.getWorkspace().getObservationManager();
+        // set up observation listener
+        observationManager.addEventListener(
+                this,
+                Event.NODE_ADDED | Event.NODE_REMOVED | Event.PROPERTY_CHANGED | Event.PROPERTY_ADDED | Event.PROPERTY_REMOVED,
+                APPS_ROOT,
+                true /* isDeep */,
+                null /* uuid */,
+                null /* nodeTypeName */,
+                true /* noLocal */
+        );
+        OSGiUtils.activate(this, componentContext);
+    }
+
+    /**
+     * Component deactivator
+     *
+     * @param context The component context
+     * @throws Exception
+     */
+    @Deactivate
+    protected void deactivate(final ComponentContext context)
+            throws Exception {
+        if (session != null) {
+            try {
+                observationManager.removeEventListener(this);
+            } catch (RepositoryException ew) {
+                log.error(ERROR, ew);
+            }
+            session.logout();
+            session = null;
+        }
+    }
 
     /**
      * Inner class: Configuration implementer
      */
     private class ConfigurationImpl
             implements Configuration {
+
+        private Map<String, Map<String, InertProperty>> configMembers = new LinkedHashMap<>();
+        private Set<String> propNamesDeepCache = Collections.emptySet();
 
         private ConfigurationImpl(String resourceType)
                 throws Exception {
@@ -134,17 +231,10 @@ public class AEMConfigurationProviderImpl
             resourceResolver.close();
         }
 
-        @Override
-        public Mode defaultMode() {
-            return DEFAULT_MODE;
-        }
-
-        private Map<String, Map<String, InertProperty>> configMembers = new LinkedHashMap<>();
-        private Set<String> propNamesDeepCache = Collections.emptySet();
-
-        private Map<String, InertProperty>
-        getNodePropertiesMap(Node node, Map<String, InertProperty> propsMap, String propertyPrefix)
-                throws Exception {
+        private Map<String, InertProperty> getNodePropertiesMap(
+                Node node,
+                Map<String, InertProperty> propsMap,
+                String propertyPrefix) throws Exception {
             NodeIterator nodeIterator = node.getNodes();
             while (nodeIterator.hasNext()) {
                 Node childNode = nodeIterator.nextNode();
@@ -189,7 +279,6 @@ public class AEMConfigurationProviderImpl
                 }
             }
             propNamesDeepCache = names(false);
-
         }
 
         private Set<String> names(boolean shallow) {
@@ -286,6 +375,11 @@ public class AEMConfigurationProviderImpl
         private Collection<Value> toCollection(InertProperty property)
                 throws Exception {
             return property.values();
+        }
+
+        @Override
+        public Mode defaultMode() {
+            return DEFAULT_MODE;
         }
 
         @Override
@@ -448,101 +542,6 @@ public class AEMConfigurationProviderImpl
                 log.error(ERROR, ew);
             }
             return obj.toJSONString(style);
-        }
-    }
-
-    /**
-     * Trigger on event
-     *
-     * @param eventIterator The event iterator object
-     */
-    @Override
-    public void onEvent(EventIterator eventIterator) {
-        ResourceResolver resourceResolver = null;
-        try {
-            Map<String, Object> authenticationInfo = new HashMap<String, Object>();
-            authenticationInfo.put(ResourceResolverFactory.SUBSERVICE, CONFIG_SERVICE);
-            resourceResolver = resourceResolverFactory.getServiceResourceResolver(authenticationInfo);
-
-            ComponentManager componentManager = resourceResolver.adaptTo(ComponentManager.class);
-            if (resourceResolver != null) {
-                while (eventIterator.hasNext()) {
-                    Event event = eventIterator.nextEvent();
-                    String path = event.getPath();
-                    switch (event.getType()) {
-                        case Event.PROPERTY_REMOVED:
-                        case Event.NODE_REMOVED:
-                        case Event.PROPERTY_CHANGED:
-                        case Event.PROPERTY_ADDED:
-                            path = path.substring(0, path.lastIndexOf('/'));
-                            break;
-                        case Event.NODE_MOVED:
-                            path = event.getInfo().get("srcChildRelPath").toString();
-                            break;
-                        case Event.NODE_ADDED:
-                        default:
-                    }
-                    Resource resource = resourceResolver.getResource(path);
-                    if (resource != null) {
-                        com.day.cq.wcm.api.components.Component component = ResourceUtils.findContainingComponent(resource);
-                        if (component != null) {
-                            configCache.clear();
-                        }
-                    }
-                }
-            }
-        } catch (Exception ew) {
-            log.error(ERROR, ew);
-        } finally {
-            if (resourceResolver != null)
-                resourceResolver.close();
-        }
-    }
-
-    private Session session;
-    private ObservationManager observationManager;
-
-    /**
-     * Component activator
-     *
-     * @param componentContext The component context
-     * @throws Exception
-     */
-    @Activate
-    protected void activate(ComponentContext componentContext)
-            throws Exception {
-        session = repository.loginService(CONFIG_SERVICE, null);
-        observationManager = session.getWorkspace().getObservationManager();
-        // set up observation listener
-        observationManager.addEventListener(
-                this,
-                Event.NODE_ADDED | Event.NODE_REMOVED | Event.PROPERTY_CHANGED | Event.PROPERTY_ADDED | Event.PROPERTY_REMOVED,
-                APPS_ROOT,
-                true /* isDeep */,
-                null /* uuid */,
-                null /* nodeTypeName */,
-                true /* noLocal */
-        );
-        OSGiUtils.activate(this, componentContext);
-    }
-
-    /**
-     * Component deactivator
-     *
-     * @param context The component context
-     * @throws Exception
-     */
-    @Deactivate
-    protected void deactivate(final ComponentContext context)
-            throws Exception {
-        if (session != null) {
-            try {
-                observationManager.removeEventListener(this);
-            } catch (RepositoryException ew) {
-                log.error(ERROR, ew);
-            }
-            session.logout();
-            session = null;
         }
     }
 
