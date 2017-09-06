@@ -123,20 +123,14 @@ public class AEMConfigurationProviderImpl
     private class ConfigurationImpl
             implements Configuration {
 
-        //private Resource componentResource;
-        private com.day.cq.wcm.api.components.Component component;
-        private ComponentManager componentManager;
-        private ResourceResolver resourceResolver;
-
         private ConfigurationImpl(String resourceType)
                 throws Exception {
             Map<String, Object> authenticationInfo = new HashMap<String, Object>();
             authenticationInfo.put(ResourceResolverFactory.SUBSERVICE, CONFIG_SERVICE);
-            resourceResolver = resourceResolverFactory.getServiceResourceResolver(authenticationInfo);
+            ResourceResolver resourceResolver = resourceResolverFactory.getServiceResourceResolver(authenticationInfo);
 
-            componentManager = resourceResolver.adaptTo(ComponentManager.class);
-            component = componentManager.getComponent(resourceType);
-            loadConfigHierarchy();
+            ComponentManager componentManager = resourceResolver.adaptTo(ComponentManager.class);
+            loadConfigHierarchy(componentManager, resourceType);
             resourceResolver.close();
         }
 
@@ -169,25 +163,25 @@ public class AEMConfigurationProviderImpl
             return propsMap;
         }
 
-        private void loadConfigHierarchy()
+        private void loadConfigHierarchy(final ComponentManager componentManager, final String resourceType)
                 throws Exception {
+            com.day.cq.wcm.api.components.Component component = componentManager.getComponent(resourceType);
             if (component != null) {
                 if (!configCache.containsKey(component.getResourceType())) {
-                    com.day.cq.wcm.api.components.Component aComponent = component;
-                    while (aComponent != null) {
-                        Resource configResource = aComponent.getLocalResource(XK_CONFIG_RESOURCE_NAME);
+                    while (component != null) {
+                        Resource configResource = component.getLocalResource(XK_CONFIG_RESOURCE_NAME);
                         if (configResource == null)
                             break;
                         Resource foundComponentResource = configResource.getParent();
-                        if (!foundComponentResource.getPath().equals(aComponent.getPath())) {
-                            aComponent = componentManager.getComponent(foundComponentResource.getPath());
+                        if (!foundComponentResource.getPath().equals(component.getPath())) {
+                            component = componentManager.getComponent(foundComponentResource.getPath());
                         }
                         Node node = configResource.adaptTo(Node.class);
 
                         Map<String, InertProperty> propsMap = getNodePropertiesMap(node, new HashMap<String, InertProperty>(), BLANK);
-                        configMembers.put(aComponent.getResourceType(), propsMap);
+                        configMembers.put(component.getResourceType(), propsMap);
 
-                        aComponent = aComponent.getSuperComponent();
+                        component = component.getSuperComponent();
                     }
                     configCache.put(component.getResourceType(), configMembers);
                 } else {
