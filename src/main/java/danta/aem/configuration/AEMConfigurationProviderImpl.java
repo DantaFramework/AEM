@@ -66,6 +66,8 @@ public class AEMConfigurationProviderImpl
 
     private static final Mode DEFAULT_MODE = Mode.INHERIT; // TODO: Make configurable
     private static final String CONFIG_SERVICE = "config-service";
+    private static final Map<String, Object> RESOURCE_RESOLVER_PARAMS =
+            Collections.unmodifiableMap(Collections.singletonMap(ResourceResolverFactory.SUBSERVICE, CONFIG_SERVICE));
 
     @Reference(cardinality = ReferenceCardinality.MANDATORY_UNARY, policy = ReferencePolicy.STATIC)
     private ResourceResolverFactory resourceResolverFactory;
@@ -88,9 +90,7 @@ public class AEMConfigurationProviderImpl
     public boolean hasConfig(String resourceType)
             throws Exception {
         boolean hasConfigNode = false;
-        Map<String, Object> authenticationInfo = new HashMap<String, Object>();
-        authenticationInfo.put(ResourceResolverFactory.SUBSERVICE, CONFIG_SERVICE);
-        ResourceResolver resourceResolver = resourceResolverFactory.getServiceResourceResolver(authenticationInfo);
+        ResourceResolver resourceResolver = resourceResolverFactory.getServiceResourceResolver(RESOURCE_RESOLVER_PARAMS);
 
         ComponentManager componentManager = resourceResolver.adaptTo(ComponentManager.class);
         com.day.cq.wcm.api.components.Component component = componentManager.getComponent(resourceType);
@@ -222,10 +222,8 @@ public class AEMConfigurationProviderImpl
 
         private ConfigurationImpl(String resourceType)
                 throws Exception {
-            Map<String, Object> authenticationInfo = new HashMap<String, Object>();
-            authenticationInfo.put(ResourceResolverFactory.SUBSERVICE, CONFIG_SERVICE);
-            ResourceResolver resourceResolver = resourceResolverFactory.getServiceResourceResolver(authenticationInfo);
-
+            ResourceResolver resourceResolver =
+                    resourceResolverFactory.getServiceResourceResolver(RESOURCE_RESOLVER_PARAMS);
             ComponentManager componentManager = resourceResolver.adaptTo(ComponentManager.class);
             loadConfigHierarchy(componentManager, resourceType);
             resourceResolver.close();
