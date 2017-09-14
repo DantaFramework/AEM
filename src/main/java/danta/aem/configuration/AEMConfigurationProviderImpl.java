@@ -64,11 +64,20 @@ public class AEMConfigurationProviderImpl
 
     protected final Logger log = LoggerFactory.getLogger(this.getClass());
 
+    private static final Mode DEFAULT_MODE = Mode.INHERIT; // TODO: Make configurable
+    private static final String CONFIG_SERVICE = "config-service";
+    private static final Map<String, Object> RESOURCE_RESOLVER_PARAMS =
+            Collections.unmodifiableMap(Collections.singletonMap(ResourceResolverFactory.SUBSERVICE, CONFIG_SERVICE));
+
     @Reference(cardinality = ReferenceCardinality.MANDATORY_UNARY, policy = ReferencePolicy.STATIC)
     private ResourceResolverFactory resourceResolverFactory;
 
-    private static final Mode DEFAULT_MODE = Mode.INHERIT; // TODO: Make configurable
-    private static final String CONFIG_SERVICE = "config-service";
+    @Reference
+    private SlingRepository repository;
+
+    private Session session;
+    private ObservationManager observationManager;
+    private final Map<String, Map<String, Map<String, InertProperty>>> configCache = new HashMap<>();
 
     /**
      * Check if the given resource type has configuration
@@ -81,9 +90,7 @@ public class AEMConfigurationProviderImpl
     public boolean hasConfig(String resourceType)
             throws Exception {
         boolean hasConfigNode = false;
-        Map<String, Object> authenticationInfo = new HashMap<String, Object>();
-        authenticationInfo.put(ResourceResolverFactory.SUBSERVICE, CONFIG_SERVICE);
-        ResourceResolver resourceResolver = resourceResolverFactory.getServiceResourceResolver(authenticationInfo);
+        ResourceResolver resourceResolver = resourceResolverFactory.getServiceResourceResolver(RESOURCE_RESOLVER_PARAMS);
 
         ComponentManager componentManager = resourceResolver.adaptTo(ComponentManager.class);
         com.day.cq.wcm.api.components.Component component = componentManager.getComponent(resourceType);
@@ -112,10 +119,97 @@ public class AEMConfigurationProviderImpl
         return new ConfigurationImpl(resourceType);
     }
 
-    @Reference
-    private SlingRepository repository;
+    /**
+     * Trigger on event
+     *
+     * @param eventIterator The event iterator object
+     */
+    @Override
+    public void onEvent(EventIterator eventIterator) {
+        ResourceResolver resourceResolver = null;
+        try {
+            Map<String, Object> authenticationInfo = new HashMap<String, Object>();
+            authenticationInfo.put(ResourceResolverFactory.SUBSERVICE, CONFIG_SERVICE);
+            resourceResolver = resourceResolverFactory.getServiceResourceResolver(authenticationInfo);
 
-    private final Map<String, Map<String, Map<String, InertProperty>>> configCache = new HashMap<>();
+            ComponentManager componentManager = resourceResolver.adaptTo(ComponentManager.class);
+            if (resourceResolver != null) {
+                while (eventIterator.hasNext()) {
+                    Event event = eventIterator.nextEvent();
+                    String path = event.getPath();
+                    switch (event.getType()) {
+                        case Event.PROPERTY_REMOVED:
+                        case Event.NODE_REMOVED:
+                        case Event.PROPERTY_CHANGED:
+                        case Event.PROPERTY_ADDED:
+                            path = path.substring(0, path.lastIndexOf('/'));
+                            break;
+                        case Event.NODE_MOVED:
+                            path = event.getInfo().get("srcChildRelPath").toString();
+                            break;
+                        case Event.NODE_ADDED:
+                        default:
+                    }
+                    Resource resource = resourceResolver.getResource(path);
+                    if (resource != null) {
+                        com.day.cq.wcm.api.components.Component component = ResourceUtils.findContainingComponent(resource);
+                        if (component != null) {
+                            configCache.clear();
+                        }
+                    }
+                }
+            }
+        } catch (Exception ew) {
+            log.error(ERROR, ew);
+        } finally {
+            if (resourceResolver != null)
+                resourceResolver.close();
+        }
+    }
+
+    /**
+     * Component activator
+     *
+     * @param componentContext The component context
+     * @throws Exception
+     */
+    @Activate
+    protected void activate(ComponentContext componentContext)
+            throws Exception {
+        session = repository.loginService(CONFIG_SERVICE, null);
+        observationManager = session.getWorkspace().getObservationManager();
+        // set up observation listener
+        observationManager.addEventListener(
+                this,
+                Event.NODE_ADDED | Event.NODE_REMOVED | Event.PROPERTY_CHANGED | Event.PROPERTY_ADDED | Event.PROPERTY_REMOVED,
+                APPS_ROOT,
+                true /* isDeep */,
+                null /* uuid */,
+                null /* nodeTypeName */,
+                true /* noLocal */
+        );
+        OSGiUtils.activate(this, componentContext);
+    }
+
+    /**
+     * Component deactivator
+     *
+     * @param context The component context
+     * @throws Exception
+     */
+    @Deactivate
+    protected void deactivate(final ComponentContext context)
+            throws Exception {
+        if (session != null) {
+            try {
+                observationManager.removeEventListener(this);
+            } catch (RepositoryException ew) {
+                log.error(ERROR, ew);
+            }
+            session.logout();
+            session = null;
+        }
+    }
 
     /**
      * Inner class: Configuration implementer
@@ -123,34 +217,22 @@ public class AEMConfigurationProviderImpl
     private class ConfigurationImpl
             implements Configuration {
 
-        //private Resource componentResource;
-        private com.day.cq.wcm.api.components.Component component;
-        private ComponentManager componentManager;
-        private ResourceResolver resourceResolver;
-
-        private ConfigurationImpl(String resourceType)
-                throws Exception {
-            Map<String, Object> authenticationInfo = new HashMap<String, Object>();
-            authenticationInfo.put(ResourceResolverFactory.SUBSERVICE, CONFIG_SERVICE);
-            resourceResolver = resourceResolverFactory.getServiceResourceResolver(authenticationInfo);
-
-            componentManager = resourceResolver.adaptTo(ComponentManager.class);
-            component = componentManager.getComponent(resourceType);
-            loadConfigHierarchy();
-            resourceResolver.close();
-        }
-
-        @Override
-        public Mode defaultMode() {
-            return DEFAULT_MODE;
-        }
-
         private Map<String, Map<String, InertProperty>> configMembers = new LinkedHashMap<>();
         private Set<String> propNamesDeepCache = Collections.emptySet();
 
-        private Map<String, InertProperty>
-        getNodePropertiesMap(Node node, Map<String, InertProperty> propsMap, String propertyPrefix)
+        private ConfigurationImpl(String resourceType)
                 throws Exception {
+            ResourceResolver resourceResolver =
+                    resourceResolverFactory.getServiceResourceResolver(RESOURCE_RESOLVER_PARAMS);
+            ComponentManager componentManager = resourceResolver.adaptTo(ComponentManager.class);
+            loadConfigHierarchy(componentManager, resourceType);
+            resourceResolver.close();
+        }
+
+        private Map<String, InertProperty> getNodePropertiesMap(
+                Node node,
+                Map<String, InertProperty> propsMap,
+                String propertyPrefix) throws Exception {
             NodeIterator nodeIterator = node.getNodes();
             while (nodeIterator.hasNext()) {
                 Node childNode = nodeIterator.nextNode();
@@ -169,25 +251,25 @@ public class AEMConfigurationProviderImpl
             return propsMap;
         }
 
-        private void loadConfigHierarchy()
+        private void loadConfigHierarchy(final ComponentManager componentManager, final String resourceType)
                 throws Exception {
+            com.day.cq.wcm.api.components.Component component = componentManager.getComponent(resourceType);
             if (component != null) {
                 if (!configCache.containsKey(component.getResourceType())) {
-                    com.day.cq.wcm.api.components.Component aComponent = component;
-                    while (aComponent != null) {
-                        Resource configResource = aComponent.getLocalResource(XK_CONFIG_RESOURCE_NAME);
+                    while (component != null) {
+                        Resource configResource = component.getLocalResource(XK_CONFIG_RESOURCE_NAME);
                         if (configResource == null)
                             break;
                         Resource foundComponentResource = configResource.getParent();
-                        if (!foundComponentResource.getPath().equals(aComponent.getPath())) {
-                            aComponent = componentManager.getComponent(foundComponentResource.getPath());
+                        if (!foundComponentResource.getPath().equals(component.getPath())) {
+                            component = componentManager.getComponent(foundComponentResource.getPath());
                         }
                         Node node = configResource.adaptTo(Node.class);
 
                         Map<String, InertProperty> propsMap = getNodePropertiesMap(node, new HashMap<String, InertProperty>(), BLANK);
-                        configMembers.put(aComponent.getResourceType(), propsMap);
+                        configMembers.put(component.getResourceType(), propsMap);
 
-                        aComponent = aComponent.getSuperComponent();
+                        component = component.getSuperComponent();
                     }
                     configCache.put(component.getResourceType(), configMembers);
                 } else {
@@ -195,7 +277,6 @@ public class AEMConfigurationProviderImpl
                 }
             }
             propNamesDeepCache = names(false);
-
         }
 
         private Set<String> names(boolean shallow) {
@@ -292,6 +373,11 @@ public class AEMConfigurationProviderImpl
         private Collection<Value> toCollection(InertProperty property)
                 throws Exception {
             return property.values();
+        }
+
+        @Override
+        public Mode defaultMode() {
+            return DEFAULT_MODE;
         }
 
         @Override
@@ -454,101 +540,6 @@ public class AEMConfigurationProviderImpl
                 log.error(ERROR, ew);
             }
             return obj.toJSONString(style);
-        }
-    }
-
-    /**
-     * Trigger on event
-     *
-     * @param eventIterator The event iterator object
-     */
-    @Override
-    public void onEvent(EventIterator eventIterator) {
-        ResourceResolver resourceResolver = null;
-        try {
-            Map<String, Object> authenticationInfo = new HashMap<String, Object>();
-            authenticationInfo.put(ResourceResolverFactory.SUBSERVICE, CONFIG_SERVICE);
-            resourceResolver = resourceResolverFactory.getServiceResourceResolver(authenticationInfo);
-
-            ComponentManager componentManager = resourceResolver.adaptTo(ComponentManager.class);
-            if (resourceResolver != null) {
-                while (eventIterator.hasNext()) {
-                    Event event = eventIterator.nextEvent();
-                    String path = event.getPath();
-                    switch (event.getType()) {
-                        case Event.PROPERTY_REMOVED:
-                        case Event.NODE_REMOVED:
-                        case Event.PROPERTY_CHANGED:
-                        case Event.PROPERTY_ADDED:
-                            path = path.substring(0, path.lastIndexOf('/'));
-                            break;
-                        case Event.NODE_MOVED:
-                            path = event.getInfo().get("srcChildRelPath").toString();
-                            break;
-                        case Event.NODE_ADDED:
-                        default:
-                    }
-                    Resource resource = resourceResolver.getResource(path);
-                    if (resource != null) {
-                        com.day.cq.wcm.api.components.Component component = ResourceUtils.findContainingComponent(resource);
-                        if (component != null) {
-                            configCache.clear();
-                        }
-                    }
-                }
-            }
-        } catch (Exception ew) {
-            log.error(ERROR, ew);
-        } finally {
-            if (resourceResolver != null)
-                resourceResolver.close();
-        }
-    }
-
-    private Session session;
-    private ObservationManager observationManager;
-
-    /**
-     * Component activator
-     *
-     * @param componentContext The component context
-     * @throws Exception
-     */
-    @Activate
-    protected void activate(ComponentContext componentContext)
-            throws Exception {
-        session = repository.loginService(CONFIG_SERVICE, null);
-        observationManager = session.getWorkspace().getObservationManager();
-        // set up observation listener
-        observationManager.addEventListener(
-                this,
-                Event.NODE_ADDED | Event.NODE_REMOVED | Event.PROPERTY_CHANGED | Event.PROPERTY_ADDED | Event.PROPERTY_REMOVED,
-                APPS_ROOT,
-                true /* isDeep */,
-                null /* uuid */,
-                null /* nodeTypeName */,
-                true /* noLocal */
-        );
-        OSGiUtils.activate(this, componentContext);
-    }
-
-    /**
-     * Component deactivator
-     *
-     * @param context The component context
-     * @throws Exception
-     */
-    @Deactivate
-    protected void deactivate(final ComponentContext context)
-            throws Exception {
-        if (session != null) {
-            try {
-                observationManager.removeEventListener(this);
-            } catch (RepositoryException ew) {
-                log.error(ERROR, ew);
-            }
-            session.logout();
-            session = null;
         }
     }
 
