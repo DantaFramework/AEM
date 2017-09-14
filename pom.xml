@@ -29,6 +29,7 @@
     <artifactId>AEM</artifactId>
     <version>1.0.0-SNAPSHOT</version>
     <packaging>bundle</packaging>
+    <name>Danta AEM</name>
     <build>
         <plugins>
             <plugin>
