@@ -125,7 +125,7 @@ public class TemplateContentModelImpl
         return this;
     }
 
-    private TemplateContentModelImpl set(final Context context, final String path, final Object value) {
+    private synchronized TemplateContentModelImpl set(final Context context, final String path, final Object value) {
         List<String> keys = parsePath(path);
         StringBuilder builtPath = new StringBuilder();
         Map<String, Object> modelDataObj = scopeDataFor(context);
