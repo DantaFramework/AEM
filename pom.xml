@@ -43,8 +43,7 @@
                             danta.aem.assets,
                             danta.aem.contextprocessors.*,
                             danta.aem.services,
-                            danta.aem,
-                            org.apache.sling.commons.osgi.*
+                            danta.aem
                         </Export-Package>
                         <Embed-Dependency>handlebars, antlr4-runtime, org.mozilla.javascript, sling-query</Embed-Dependency>
                         <Import-Package>
@@ -232,18 +231,6 @@
             <groupId>org.apache.commons</groupId>
             <artifactId>commons-imaging</artifactId>
             <version>1.0-R1534292</version>
-        </dependency>
-        <dependency>
-            <groupId>com.day.cq</groupId>
-            <artifactId>cq-commons</artifactId>
-            <version>5.9.22</version>
-            <scope>provided</scope>
-        </dependency>
-        <dependency>
-            <groupId>org.apache.sling</groupId>
-            <artifactId>org.apache.sling.commons.osgi</artifactId>
-            <version>2.4.0</version>
-            <scope>provided</scope>
         </dependency>
     </dependencies>
 </project>
