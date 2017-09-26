@@ -19,7 +19,7 @@
 package danta.aem;
 
 import static danta.Constants.SLASH;
-import static danta.Constants.LAYERX_PRIVATE_AN_PREFIX;
+import static danta.Constants.PRIVATE_AN_PREFIX;
 import static danta.Constants.CLIENT_CONTENT_MODEL_SELECTOR;
 import static danta.Constants.PAGE;
 import static danta.Constants.COMPONENT;
@@ -69,12 +69,12 @@ public class Constants {
     public static final String ASSET_CONTENT = JCR_CONTENT + SLASH + RENDITIONS_NODE  + SLASH
             + DEFAULT_RENDITION + SLASH + JCR_CONTENT;
     //Webservice Stuff
-    public static final String CLIENT_PAGE_CONTENT_MODEL_REQ_AN = LAYERX_PRIVATE_AN_PREFIX + "clientPageContentModel";
-    public static final String CLIENT_COMPONENT_CONTENT_MODEL_REQ_AN = LAYERX_PRIVATE_AN_PREFIX + "clientComponentContentModel";
+    public static final String CLIENT_PAGE_CONTENT_MODEL_REQ_AN = PRIVATE_AN_PREFIX + "clientPageContentModel";
+    public static final String CLIENT_COMPONENT_CONTENT_MODEL_REQ_AN = PRIVATE_AN_PREFIX + "clientComponentContentModel";
     public static final String CLIENT_COMPONENT_CONTENT_MODEL_SELECTORS = CLIENT_CONTENT_MODEL_SELECTOR + "." + COMPONENT;
     public static final String CLIENT_PAGE_CONTENT_MODEL_SELECTORS = CLIENT_CONTENT_MODEL_SELECTOR + "." + PAGE;
     //Sling
-    public static final String SLING_HTTP_REQUEST = LAYERX_PRIVATE_AN_PREFIX + "sling_http_request";
+    public static final String SLING_HTTP_REQUEST = PRIVATE_AN_PREFIX + "sling_http_request";
     //Sling models
     public static final String SLING_MODEL_PROPERTIES_KEY = "model";
     public static final String SLING_MODELS_CONFIG_PROPERTY_NAME = "xk_slingModels";
