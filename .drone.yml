@@ -1,0 +1,40 @@
+pipeline:
+  restore_cache:
+    restore: true
+    path: /m2-cache/aem/
+    image: plugins/s3-cache
+    secrets: ["cache_s3_endpoint", "cache_s3_access_key", "cache_s3_secret_key"]
+
+  test:
+    image: maven:3-jdk-8-slim
+    commands: 
+      - mvn clean test -B -Dmaven.repo.local=./m2
+
+  deploy_snapshot:
+    image: maven:3-jdk-8-slim
+    secrets: [m2_settings]
+    commands:
+      - echo $M2_SETTINGS > $HOME/.m2/settings.xml
+      - mvn install -B -Pdeploy-nexus -Dmaven.repo.local=./m2
+    when:
+      branch: master
+      event: push
+
+  deploy_release:
+    image: maven:3-jdk-8-slim
+    secrets: [m2_settings]
+    commands:
+      - echo $M2_SETTINGS > $HOME/.m2/settings.xml
+      - mvn install -B -Pdeploy-nexus-release -Dmaven.repo.local=./m2
+    when:
+      branch: [release/*]
+      event: deployment
+      environment: releases
+  
+  rebuild_cache:
+    path: /m2-cache/aem/
+    rebuild: true
+    image: plugins/s3-cache
+    secrets: ["cache_s3_endpoint", "cache_s3_access_key", "cache_s3_secret_key"]
+    mount:
+      - ./m2
