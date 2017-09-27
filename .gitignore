@@ -1,3 +1,4 @@
+*.sh
 *.class
 .DS_Store
 .settings
