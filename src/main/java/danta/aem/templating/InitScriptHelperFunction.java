@@ -87,7 +87,7 @@ public class InitScriptHelperFunction
                 buffer.append(clientLibUtil.generateClientLibrariesPristine("cq.authoring.page"));
             } else
             if (AuthoringUIMode.fromRequest(slingRequest) == AuthoringUIMode.CLASSIC) {
-                buffer.append(clientLibUtil.generateClientLibrariesPristine("cq.apps.wcm.edit"));
+                buffer.append(clientLibUtil.generateClientLibrariesPristine("cq.wcm.edit"));
                 boolean isEditMode = (wcmMode == WCMMode.EDIT) ? true : false;
                 String dialogPath = dlgPath == null ? "" : dlgPath;
                 buffer.append(this.getJavaScript(slingRequest, isEditMode, dialogPath));
