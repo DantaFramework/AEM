@@ -91,7 +91,7 @@ public class IncludeResourceHelperFunction
     @Reference(cardinality = ReferenceCardinality.MANDATORY_UNARY, policy = ReferencePolicy.STATIC)
     protected ConfigurationProvider configurationProvider;
 
-    protected final Logger log = LoggerFactory.getLogger(this.getClass());
+    protected final Logger LOG = LoggerFactory.getLogger(this.getClass());
     static final String DEFAULT_INVALID_CHARACTERS = "[ \\t$&+,:;=?@#|'<>.^*()%!~\\[\\]{}]";
     static final String CONFIG_CHARACTERS_PROPERTY = "invalidCharacteres";
     private String configCharacters;
@@ -141,7 +141,7 @@ public class IncludeResourceHelperFunction
             dispatcher.include(request, wrappedResponse);
             responseString = wrappedResponse.toString();
         } else {
-            log.error("{} It is not valid", path);
+            LOG.error("{} It is not valid", path);
         }
         return new Handlebars.SafeString(responseString);
     }
@@ -163,7 +163,7 @@ public class IncludeResourceHelperFunction
                 }
             }
         } catch (IOException e) {
-            log.error("Check interpolation of prefix or suffix parameters", e);
+            LOG.error("Check interpolation of prefix or suffix parameters", e);
         }
 
         if (path.contains(SLASH)) {
@@ -211,7 +211,7 @@ public class IncludeResourceHelperFunction
             Matcher matcher = pattern.matcher(path);
             isInvalidPath =  matcher.find();
         } catch (PatternSyntaxException e) {
-            log.error("Pattern Syntax exception ", e);
+            LOG.error("Pattern Syntax exception ", e);
         }
         return isInvalidPath;
     }

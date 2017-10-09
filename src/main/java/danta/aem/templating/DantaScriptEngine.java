@@ -63,7 +63,7 @@ import static danta.core.Constants.XK_COMPONENT_CATEGORY;
 public class DantaScriptEngine
         extends AbstractSlingScriptEngine {
 
-    protected final Logger log = LoggerFactory.getLogger(this.getClass());
+    protected final Logger LOG = LoggerFactory.getLogger(this.getClass());
     private static final String CONFIG_SERVICE = "config-service";
 
     private ConfigurationProvider configurationProvider;
@@ -164,7 +164,7 @@ public class DantaScriptEngine
                 }
 
             } else {
-                log.debug("{} is not a Danta component", resource.getPath());
+                LOG.debug("{} is not a Danta component", resource.getPath());
             }
 
         } catch (RuntimeException re) {
@@ -216,7 +216,7 @@ public class DantaScriptEngine
                 ResourceWrapper resourceWrapper = (ResourceWrapper) resource;
                 Resource innerResource = resourceWrapper.getResource();
                 if (innerResource.isResourceType("nt:unstructured")) {
-                    log.error("{} Invalid resource type, not allowed the use of components as containers directly included into the template. ", resource.getPath());
+                    LOG.error("{} Invalid resource type, not allowed the use of components as containers directly included into the template. ", resource.getPath());
                     isUnstructuredResource = true;
                 }
             }

@@ -48,7 +48,7 @@ import static danta.Constants.HTML_EXT;
 public class HTMLResourceBasedTemplateLoader
         implements TemplateLoader {
 
-    protected final Logger log = LoggerFactory.getLogger(this.getClass());
+    protected final Logger LOG = LoggerFactory.getLogger(this.getClass());
     protected Resource resource;
     protected Component component;
     protected String prefix = "";

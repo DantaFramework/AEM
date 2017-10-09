@@ -44,7 +44,7 @@ import java.io.PrintWriter;
 public abstract class AbstractExtJSONServlet
         extends SlingSafeMethodsServlet {
 
-    protected final Logger log = LoggerFactory.getLogger(getClass());
+    protected final Logger LOG = LoggerFactory.getLogger(getClass());
 
     @Reference
     protected SlingRepository repository;

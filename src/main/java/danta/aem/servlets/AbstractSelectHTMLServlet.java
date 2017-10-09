@@ -44,7 +44,7 @@ import java.util.Set;
 public abstract class AbstractSelectHTMLServlet
         extends SlingSafeMethodsServlet {
 
-    protected final Logger log = LoggerFactory.getLogger(getClass());
+    protected final Logger LOG = LoggerFactory.getLogger(getClass());
 
     @Reference
     protected SlingRepository repository;

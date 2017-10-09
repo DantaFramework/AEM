@@ -32,7 +32,6 @@ public class DantaScriptEngineFactoryTest {
 
     private DantaScriptEngineFactory scriptEngineFactory;
 
-
     @Before
     public void setUp() throws Exception {
         scriptEngineFactory = new DantaScriptEngineFactory();

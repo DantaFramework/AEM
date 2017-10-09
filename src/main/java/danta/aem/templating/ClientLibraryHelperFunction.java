@@ -73,7 +73,7 @@ public class ClientLibraryHelperFunction
     @Reference(cardinality = ReferenceCardinality.MANDATORY_UNARY, policy = ReferencePolicy.STATIC)
     HtmlLibraryManager htmlLibraryManager;
 
-    protected final Logger log = LoggerFactory.getLogger(this.getClass());
+    protected final Logger LOG = LoggerFactory.getLogger(this.getClass());
 
     private static final String ATTRIBUTE_TYPE = "type";
     private static final String ATTRIBUTE_MINIFY = "minify";
@@ -124,7 +124,7 @@ public class ClientLibraryHelperFunction
                 hasMinificationOption = true;
                 forceMinify = Boolean.parseBoolean(minificationAttribute);
             } catch (Exception e) {
-                log.error("Unable to parse minify option value: ", e);
+                LOG.error("Unable to parse minify option value: ", e);
             }
         }
 
@@ -132,12 +132,12 @@ public class ClientLibraryHelperFunction
             try {
                 forceBrowserCacheBuster = Boolean.parseBoolean(browserCacheBusterAttribute);
             } catch (Exception e) {
-                log.error("Unable to parse browser cache buster option value: ", e);
+                LOG.error("Unable to parse browser cache buster option value: ", e);
             }
         }
 
         if (categories != null) {
-            log.debug("js: " + jsCategories + " css: " + cssCategories + " forceMinify: " + forceMinify + " cacheBuster: " + forceBrowserCacheBuster + " media: " + mediaAttributeValue);
+            LOG.debug("js: " + jsCategories + " css: " + cssCategories + " forceMinify: " + forceMinify + " cacheBuster: " + forceBrowserCacheBuster + " media: " + mediaAttributeValue);
 
             clientLibraryUtil.setOptions(jsCategories, cssCategories, hasMinificationOption, forceMinify, forceBrowserCacheBuster, mediaAttributeValue);
 
