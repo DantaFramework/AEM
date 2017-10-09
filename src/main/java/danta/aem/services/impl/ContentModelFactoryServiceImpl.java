@@ -48,7 +48,7 @@ public class ContentModelFactoryServiceImpl
     @Reference(cardinality = ReferenceCardinality.MANDATORY_UNARY, policy = ReferencePolicy.STATIC)
     protected ContextProcessorEngine contextProcessorEngine;
 
-    private final Logger log = LoggerFactory.getLogger(this.getClass());
+    private final Logger LOG = LoggerFactory.getLogger(this.getClass());
 
     /**
      * This method gets the Content Model of a resource.
@@ -70,7 +70,7 @@ public class ContentModelFactoryServiceImpl
             }
 
         } catch (Exception e) {
-            log.error(e.getMessage());
+            LOG.error(e.getMessage());
         }
         return contentModel;
     }

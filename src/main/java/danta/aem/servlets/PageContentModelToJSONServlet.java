@@ -71,7 +71,7 @@ public class PageContentModelToJSONServlet
     @Reference(cardinality = ReferenceCardinality.MANDATORY_UNARY, policy = ReferencePolicy.STATIC)
     private ConfigurationProvider configurationProvider;
 
-    protected final Logger log = LoggerFactory.getLogger(this.getClass());
+    protected final Logger LOG = LoggerFactory.getLogger(this.getClass());
 
     @Override
     protected void doGet(SlingHttpServletRequest request, SlingHttpServletResponse response)
@@ -144,7 +144,7 @@ public class PageContentModelToJSONServlet
                     }
                 }
             } catch (Exception e) {
-                log.debug(e.toString());
+                LOG.debug(e.toString());
             }
             return accepts;
         }

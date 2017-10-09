@@ -62,7 +62,7 @@ import static danta.aem.Constants.APPS_ROOT;
 public class AEMConfigurationProviderImpl
         implements ConfigurationProvider<String>, EventListener {
 
-    protected final Logger log = LoggerFactory.getLogger(this.getClass());
+    protected final Logger LOG = LoggerFactory.getLogger(this.getClass());
 
     private static final Mode DEFAULT_MODE = Mode.INHERIT; // TODO: Make configurable
     private static final String CONFIG_SERVICE = "config-service";
@@ -160,7 +160,7 @@ public class AEMConfigurationProviderImpl
                 }
             }
         } catch (Exception ew) {
-            log.error(ERROR, ew);
+            LOG.error(ERROR, ew);
         } finally {
             if (resourceResolver != null)
                 resourceResolver.close();
@@ -204,7 +204,7 @@ public class AEMConfigurationProviderImpl
             try {
                 observationManager.removeEventListener(this);
             } catch (RepositoryException ew) {
-                log.error(ERROR, ew);
+                LOG.error(ERROR, ew);
             }
             session.logout();
             session = null;
@@ -508,7 +508,7 @@ public class AEMConfigurationProviderImpl
             try {
                 return new JSONObject(distilledMap()).toJSONString();
             } catch (Exception ew) {
-                log.error(ERROR, ew);
+                LOG.error(ERROR, ew);
             }
             return null;
         }
@@ -537,7 +537,7 @@ public class AEMConfigurationProviderImpl
             try {
                 obj = new JSONObject(distilledMap());
             } catch (Exception ew) {
-                log.error(ERROR, ew);
+                LOG.error(ERROR, ew);
             }
             return obj.toJSONString(style);
         }

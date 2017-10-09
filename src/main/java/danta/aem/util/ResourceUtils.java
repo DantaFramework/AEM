@@ -58,7 +58,7 @@ import static danta.aem.Constants.GLOBAL_PATH;
  */
 public class ResourceUtils {
 
-    protected static final Logger log = LoggerFactory.getLogger(ResourceUtil.class);
+    protected static final Logger LOG = LoggerFactory.getLogger(ResourceUtil.class);
 
     /**
      * Forbid instantiation
@@ -192,7 +192,7 @@ public class ResourceUtils {
                 return (resourceType != null && !resourceType.isEmpty() && !ResourceUtil.isNonExistingResource(resource) && (resource.isResourceType(resourceType) || parentNode.getPrimaryNodeType().isNodeType(resourceType))) ? resource : findParentAs(resource.getParent(), resourceType);
             }
         } catch (Exception ew) {
-            log.error(ERROR, ew);
+            LOG.error(ERROR, ew);
         }
         return null;
     }
@@ -252,7 +252,7 @@ public class ResourceUtils {
                 }
             }
         } catch (Exception e) {
-            log.error(ERROR, e);
+            LOG.error(ERROR, e);
         }
         return val;
     }
@@ -281,7 +281,7 @@ public class ResourceUtils {
                 }
             }
         } catch (Exception e) {
-            log.error(ERROR, e);
+            LOG.error(ERROR, e);
         }
         return val;
     }
@@ -372,7 +372,7 @@ public class ResourceUtils {
                 }
             }
         } catch (RepositoryException e) {
-            log.error(ERROR, e);
+            LOG.error(ERROR, e);
         }
         return isPropertyMultiple;
     }

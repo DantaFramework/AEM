@@ -51,7 +51,7 @@ import static danta.Constants.BLANK;
 public class InitScriptHelperFunction
         extends AbstractAEMHelperFunction<Object> {
 
-    protected final Logger log = LoggerFactory.getLogger(this.getClass());
+    protected final Logger LOG = LoggerFactory.getLogger(this.getClass());
 
     @Reference(cardinality = ReferenceCardinality.MANDATORY_UNARY, policy = ReferencePolicy.STATIC)
     HtmlLibraryManager htmlLibraryManager;
@@ -120,7 +120,7 @@ public class InitScriptHelperFunction
                 currentPage = resourceResolver.resolve(currentNode.getParent().getPath()).adaptTo(Page.class);
             }
         } catch (Exception e) {
-            log.error("Error trying to access the currentPage: " + e);
+            LOG.error("Error trying to access the currentPage: " + e);
         }
 
         if (currentPage != null) {

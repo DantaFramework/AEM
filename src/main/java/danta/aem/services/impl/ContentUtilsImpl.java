@@ -56,7 +56,7 @@ public class ContentUtilsImpl
     @Reference
     private SlingRequestProcessor requestProcessor;
 
-    private final Logger log = LoggerFactory.getLogger(this.getClass());
+    private final Logger LOG = LoggerFactory.getLogger(this.getClass());
 
     /**
      * This method gets the rendered content in bytes for an AEM resource.
@@ -90,9 +90,9 @@ public class ContentUtilsImpl
             output = byteArrayOutputStream.toByteArray();
 
         } catch (ServletException e) {
-            log.error(e.toString());
+            LOG.error(e.toString());
         } catch (IOException e) {
-            log.error(e.toString());
+            LOG.error(e.toString());
         }
 
         return output;

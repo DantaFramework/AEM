@@ -45,7 +45,7 @@ public class ClientLibraryUtil {
 
     private final HtmlLibraryManager htmlLibraryManager;
     private static final String MINIFY_SELECTOR = "min";
-    protected final Logger log = LoggerFactory.getLogger(this.getClass());
+    protected final Logger LOG = LoggerFactory.getLogger(this.getClass());
 
     private boolean jsCategories;
     private boolean cssCategories;
@@ -124,7 +124,7 @@ public class ClientLibraryUtil {
             }
             result = writer.toString();
         } catch (Exception e) {
-            log.error("Error generating writer includes...", e);
+            LOG.error("Error generating writer includes...", e);
         }
 
 
@@ -141,7 +141,7 @@ public class ClientLibraryUtil {
      **/
     private void buildJsIncludes(List<ClientLibrary> jsLibs, StringBuffer buffer) {
         for (ClientLibrary lib : jsLibs) {
-            log.debug("JS LIB : " + lib.getPath());
+            LOG.debug("JS LIB : " + lib.getPath());
             freshenLibrary(LibraryType.JS, lib.getPath());
 
             String path = lib.getPath();
@@ -152,7 +152,7 @@ public class ClientLibraryUtil {
                 buffer.append(path + ".js");
                 buffer.append("\"></script>\n");
             } catch (Exception e) {
-                log.error("Caught exception generating library path", e);
+                LOG.error("Caught exception generating library path", e);
             }
 
         }
@@ -168,7 +168,7 @@ public class ClientLibraryUtil {
      **/
     protected void buildCssIncludes(List<ClientLibrary> cssLibs, StringBuffer buffer) {
         for (ClientLibrary lib : cssLibs) {
-            log.debug("CSS LIB : " + lib.getPath());
+            LOG.debug("CSS LIB : " + lib.getPath());
             freshenLibrary(LibraryType.CSS, lib.getPath());
 
             String path = lib.getPath();
@@ -181,7 +181,7 @@ public class ClientLibraryUtil {
                 buffer.append(buildMediaAttribute());
                 buffer.append(" / >\n");
             } catch (Exception e) {
-                log.error("Caught exception generating library path", e);
+                LOG.error("Caught exception generating library path", e);
             }
 
         }
@@ -224,7 +224,7 @@ public class ClientLibraryUtil {
             try {
                 suffixBrowserCacheBuster = this.generateDateTime(originalPath, libType);
             } catch (Exception e) {
-                log.error("Error generating DateTime for cache buster. ", e);
+                LOG.error("Error generating DateTime for cache buster. ", e);
             }
             newPath.append(".").append(suffixBrowserCacheBuster);
         }
@@ -243,7 +243,7 @@ public class ClientLibraryUtil {
     protected void freshenLibrary(LibraryType type, String path) {
         HtmlLibrary lib = htmlLibraryManager.getLibrary(type, path);
         if (lib != null) {
-            log.debug("HtmlLibrary LastModified : " + lib.getLastModified());
+            LOG.debug("HtmlLibrary LastModified : " + lib.getLastModified());
         }
     }
 
@@ -268,7 +268,7 @@ public class ClientLibraryUtil {
             Session jcrSession = slingRequest.getResourceResolver().adaptTo(Session.class);
             resourceNode = (Node) jcrSession.getItem(resourcePath + extension);
         } catch (Exception e) {
-            log.error("Caught exception resolving Node", e);
+            LOG.error("Caught exception resolving Node", e);
         }
         // make sure we have a default date/time selector - we should never need this.
         String dateTime = "0";
