@@ -14,3 +14,6 @@
 
 
 ### Environment (for bugs)
+* Danta versions:
+* AEM version:
+* Java version:
