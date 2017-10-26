@@ -121,11 +121,13 @@ public class ClientLibraryHelperFunction
 
         if (minificationAttribute != null) {
             try {
-                hasMinificationOption = true;
-                forceMinify = Boolean.parseBoolean(minificationAttribute);
+                hasMinificationOption = Boolean.parseBoolean(minificationAttribute);
+                forceMinify = hasMinificationOption;
             } catch (Exception e) {
                 LOG.error("Unable to parse minify option value: ", e);
             }
+        } else if (htmlLibraryManager.isMinifyEnabled()) {
+            forceMinify = true;
         }
 
         if (browserCacheBusterAttribute != null) {
