@@ -55,6 +55,7 @@
                             com.adobe.acs.commons.util; resolution:=mandatory,
                             *;resolution:=optional
                         </Import-Package>
+                        <DynamicImport-Package>*</DynamicImport-Package>
                         <Bundle-Activator>danta.aem.AEMActivator</Bundle-Activator>
                     </instructions>
                 </configuration>
