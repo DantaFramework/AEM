@@ -15,7 +15,7 @@ pipeline:
     secrets: [m2_settings]
     commands:
       - echo $M2_SETTINGS > $HOME/.m2/settings.xml
-      - mvn install -B -Pdeploy-nexus -Dmaven.repo.local=./m2
+      - mvn install -B -Pwith-sources,with-javadoc,deploy-nexus -Dmaven.repo.local=./m2
     when:
       branch: master
       event: push
@@ -25,7 +25,7 @@ pipeline:
     secrets: [m2_settings]
     commands:
       - echo $M2_SETTINGS > $HOME/.m2/settings.xml
-      - mvn install -B -Pdeploy-nexus-release -Dmaven.repo.local=./m2
+      - mvn install -B -Pwith-sources,with-javadoc,deploy-nexus-release -Dmaven.repo.local=./m2
     when:
       branch: [release/*]
       event: deployment
