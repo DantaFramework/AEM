@@ -29,7 +29,17 @@
     <artifactId>AEM</artifactId>
     <version>1.0.1-SNAPSHOT</version>
     <packaging>bundle</packaging>
+
     <name>Danta AEM</name>
+    <description>The Danta AEM project</description>
+    <url>https://github.com/DantaFramework/AEM</url>
+
+    <scm>
+        <connection>scm:git:git://github.com/DantaFramework/AEM.git</connection>
+        <developerConnection>scm:git:ssh://github.com/DantaFramework/AEM.git</developerConnection>
+        <url>https://github.com/DantaFramework/AEM/tree/master</url>
+    </scm>
+
     <build>
         <plugins>
             <plugin>
