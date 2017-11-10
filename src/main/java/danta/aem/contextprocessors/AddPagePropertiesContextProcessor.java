@@ -103,7 +103,7 @@ public class AddPagePropertiesContextProcessor
                         Configuration configuration = configurationProvider.getFor(page.getContentResource().getResourceType());
                         Collection<String> bodyClasses = configuration.asStrings(XK_CONTAINER_CLASSES_CP, Mode.MERGE);
                         Node pageContentNode = page.getContentResource().adaptTo(Node.class);
-                        Map<String, Object> pageContent = propsToMap(pageContentNode.getProperties(), false);
+                        Map<String, Object> pageContent = propsToMap(pageContentNode.getProperties());
                         pageContent.put(PATH, page.getPath());
                         pageContent.put(PAGE_NAME, page.getName());
                         pageContent.put(LINK, page.getPath() + HTML_EXT);
