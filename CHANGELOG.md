@@ -1,6 +1,7 @@
 # Changelog
 
 ### Unreleased
+- Removed properties from default namespaces on page context.
 - Updated rules to apply minify option on clientLibrary helper #21.
 - Fixed issue with Sling Models to works outside AEM bundle #25.
 
