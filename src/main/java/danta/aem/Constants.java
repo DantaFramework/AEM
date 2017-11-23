@@ -78,6 +78,10 @@ public class Constants {
     //Sling models
     public static final String SLING_MODEL_PROPERTIES_KEY = "model";
     public static final String SLING_MODELS_CONFIG_PROPERTY_NAME = "xk_slingModels";
+    //Categories
     public static final String SLING_MODELS_CATEGORY = "slingModelData";
+    public static final String STRUCTURE_RESOURCES_CATEGORY = "structureResources";
+
+
 }
 
