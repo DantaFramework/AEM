@@ -92,7 +92,7 @@ public class IncludeResourceHelperFunction
     protected ConfigurationProvider configurationProvider;
 
     protected final Logger LOG = LoggerFactory.getLogger(this.getClass());
-    static final String DEFAULT_INVALID_CHARACTERS = "[ \\t$&+,:;=?@#|'<>.^*()%!~\\[\\]{}]";
+    static final String DEFAULT_INVALID_CHARACTERS = "[ \\t$&+,;=?@#|'<>.^*()%!~\\[\\]{}]";
     static final String CONFIG_CHARACTERS_PROPERTY = "invalidCharacteres";
     private String configCharacters;
 
