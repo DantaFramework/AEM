@@ -21,12 +21,12 @@
          xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
     <modelVersion>4.0.0</modelVersion>
     <parent>
-        <groupId>Danta</groupId>
-        <artifactId>Parent</artifactId>
+        <groupId>io.tikaltechnologies.danta</groupId>
+        <artifactId>parent</artifactId>
         <version>1.0.1-SNAPSHOT</version>
         <relativePath>../Parent/pom.xml</relativePath>
     </parent>
-    <artifactId>AEM</artifactId>
+    <artifactId>aem</artifactId>
     <version>1.0.1-SNAPSHOT</version>
     <packaging>bundle</packaging>
 
@@ -88,13 +88,13 @@
     <dependencies>
         <!-- danta -->
         <dependency>
-            <groupId>Danta</groupId>
-            <artifactId>API</artifactId>
+            <groupId>io.tikaltechnologies.danta</groupId>
+            <artifactId>api</artifactId>
             <version>1.0.1-SNAPSHOT</version>
         </dependency>
         <dependency>
-            <groupId>Danta</groupId>
-            <artifactId>Core</artifactId>
+            <groupId>io.tikaltechnologies.danta</groupId>
+            <artifactId>core</artifactId>
             <version>1.0.1-SNAPSHOT</version>
         </dependency>
         <!-- misc -->
