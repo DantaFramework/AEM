@@ -1,6 +1,6 @@
 # Changelog
 
-### Unreleased
+### 1.0.5
 - Changed project groupId from "danta" to "io.tikaltechnologies.danta".
 - Changed project artifactId from "AEM" to "aem".
 - Added AddStructureResourcesContextProcessor to include the structure resources of a page to the Content Model.

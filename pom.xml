@@ -23,11 +23,11 @@
     <parent>
         <groupId>io.tikaltechnologies.danta</groupId>
         <artifactId>parent</artifactId>
-        <version>1.0.1-SNAPSHOT</version>
+        <version>1.0.1</version>
         <relativePath>../Parent/pom.xml</relativePath>
     </parent>
     <artifactId>aem</artifactId>
-    <version>1.0.1-SNAPSHOT</version>
+    <version>1.0.5</version>
     <packaging>bundle</packaging>
 
     <name>Danta AEM</name>
@@ -90,12 +90,12 @@
         <dependency>
             <groupId>io.tikaltechnologies.danta</groupId>
             <artifactId>api</artifactId>
-            <version>1.0.1-SNAPSHOT</version>
+            <version>1.0.1</version>
         </dependency>
         <dependency>
             <groupId>io.tikaltechnologies.danta</groupId>
             <artifactId>core</artifactId>
-            <version>1.0.1-SNAPSHOT</version>
+            <version>1.0.1</version>
         </dependency>
         <!-- misc -->
         <dependency>
