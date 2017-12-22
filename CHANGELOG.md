@@ -1,7 +1,7 @@
 # Changelog
 
 ### Unreleased
-- No visible changes.
+- Implementation of the template content model was moved to the Core project.
 
 ### 1.0.5
 - Changed project groupId from "danta" to "io.tikaltechnologies.danta".
