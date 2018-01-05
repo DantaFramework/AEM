@@ -1,7 +1,7 @@
 # Changelog
 
 ### Unreleased
-- Implementation of the template content model was moved to the Core project.
+- Updated implementation of the template content model to extend AbstractTemplateContentModelImpl in the Core project.
 
 ### 1.0.5
 - Changed project groupId from "danta" to "io.tikaltechnologies.danta".
