@@ -56,7 +56,7 @@
                             danta.aem.services,
                             danta.aem
                         </Export-Package>
-                        <Embed-Dependency>handlebars, antlr4-runtime, org.mozilla.javascript, sling-query</Embed-Dependency>
+                        <Embed-Dependency>sling-query</Embed-Dependency>
                         <Import-Package>
                             danta.api.*; resolution:=mandatory,
                             danta; resolution:=mandatory,
