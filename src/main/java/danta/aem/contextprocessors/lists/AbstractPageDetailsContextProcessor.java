@@ -74,7 +74,10 @@ public abstract class AbstractPageDetailsContextProcessor extends
                 pageDetails.put(IMAGE_PATH, pageImagePath);
             }
             String vanityPath = page.getVanityUrl();
-            pageDetails.put(VANITY_PATH, null != vanityPath? vanityPath : page.getPath());
+            if(vanityPath != null) {
+                pageDetails.put(VANITY_PATH, vanityPath);
+            }
+
             if (currentPage.equals(page.getPath())) {
                 pageDetails.put(IS_CURRENT_PAGE, true);
             }
