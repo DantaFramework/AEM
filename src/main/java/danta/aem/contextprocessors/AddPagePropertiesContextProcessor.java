@@ -145,6 +145,13 @@ public class AddPagePropertiesContextProcessor
                             pageContent.put(IS_CLASSIC_UI_MODE, true);
                             pageContent.put(IS_TOUCH_UI_MODE, false);
                         }
+
+                        // Adding vanity path (sling:vanityPath)
+                        String vanityPath = page.getVanityUrl();
+                        if(vanityPath != null) {
+                            pageContent.put(VANITY_PATH, vanityPath);
+                        }
+
                         contentModel.set(PAGE_PROPERTIES_KEY, pageContent);
                     }
                 }
