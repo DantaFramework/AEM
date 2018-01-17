@@ -23,6 +23,7 @@ import static danta.Constants.PRIVATE_AN_PREFIX;
 import static danta.Constants.CLIENT_CONTENT_MODEL_SELECTOR;
 import static danta.Constants.PAGE;
 import static danta.Constants.COMPONENT;
+import static danta.Constants.STATS;
 
 /**
  * Constants for AEM specific.
@@ -73,6 +74,8 @@ public class Constants {
     public static final String CLIENT_COMPONENT_CONTENT_MODEL_REQ_AN = PRIVATE_AN_PREFIX + "clientComponentContentModel";
     public static final String CLIENT_COMPONENT_CONTENT_MODEL_SELECTORS = CLIENT_CONTENT_MODEL_SELECTOR + "." + COMPONENT;
     public static final String CLIENT_PAGE_CONTENT_MODEL_SELECTORS = CLIENT_CONTENT_MODEL_SELECTOR + "." + PAGE;
+    public static final String CLIENT_STATISTICS_CONTENT_MODEL_SELECTORS = CLIENT_CONTENT_MODEL_SELECTOR + "." + STATS;
+
     //Sling
     public static final String SLING_HTTP_REQUEST = PRIVATE_AN_PREFIX + "sling_http_request";
     //Sling models
