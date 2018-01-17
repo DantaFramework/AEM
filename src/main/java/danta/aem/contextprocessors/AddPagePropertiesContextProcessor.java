@@ -51,6 +51,7 @@ import static danta.aem.Constants.JCR_DESCRIPTION;
 import static danta.aem.Constants.SLING_HTTP_REQUEST;
 import static danta.aem.util.PropertyUtils.propsToMap;
 import static danta.core.Constants.XK_CONTAINER_CLASSES_CP;
+import static danta.aem.util.PageUtils.getVanityURLs;
 
 /**
  * The context processor for adding page properties to content model
@@ -146,10 +147,10 @@ public class AddPagePropertiesContextProcessor
                             pageContent.put(IS_TOUCH_UI_MODE, false);
                         }
 
-                        // Adding vanity path (sling:vanityPath)
-                        String vanityPath = page.getVanityUrl();
-                        if(vanityPath != null) {
-                            pageContent.put(VANITY_PATH, vanityPath);
+                        // Adding vanity path
+                        Object vanityURLs = getVanityURLs(page);
+                        if (vanityURLs != null) {
+                            pageContent.put(VANITY_PATH, vanityURLs);
                         }
 
                         contentModel.set(PAGE_PROPERTIES_KEY, pageContent);
