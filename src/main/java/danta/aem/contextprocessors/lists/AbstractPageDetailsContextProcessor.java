@@ -37,6 +37,7 @@ import java.util.Map;
 import static danta.Constants.*;
 import static danta.aem.Constants.JCR_CREATED;
 import static danta.aem.Constants.JCR_DESCRIPTION;
+import static danta.aem.util.PageUtils.getVanityURLs;
 
 /**
  * The abstraction context processor for building a map of property object from a page detail
@@ -73,9 +74,10 @@ public abstract class AbstractPageDetailsContextProcessor extends
             if (StringUtils.isNotEmpty(pageImagePath)) {
                 pageDetails.put(IMAGE_PATH, pageImagePath);
             }
-            String vanityPath = page.getVanityUrl();
-            if(vanityPath != null) {
-                pageDetails.put(VANITY_PATH, vanityPath);
+            // Adding vanity path
+            Object vanityURLs = getVanityURLs(page);
+            if (vanityURLs != null) {
+                pageDetails.put(VANITY_PATH, vanityURLs);
             }
 
             if (currentPage.equals(page.getPath())) {
