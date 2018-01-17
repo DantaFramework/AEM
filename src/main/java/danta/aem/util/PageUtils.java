@@ -25,9 +25,11 @@ import org.apache.commons.lang3.StringUtils;
 import org.apache.sling.api.resource.ValueMap;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Map;
 
 import static danta.Constants.BLANK;
+import static danta.aem.Constants.SLING_VANITY_PATH;
 
 /**
  * Page Utility class, contained generic methods for handling CQ Page.
@@ -145,5 +147,26 @@ public class PageUtils {
             }
         }
         return keywords;
+    }
+
+    /**
+     * Returns the vanity URLs stored in the page node.
+     *
+     * @param page The page object
+     * @return vanityPaths The vanityURLs either as a string or list.
+     */
+    public static Object getVanityURLs(Page page) {
+        Object vanityPath = page.getProperties().get(SLING_VANITY_PATH);
+        if(vanityPath != null) {
+            if(vanityPath.getClass().isArray()) {
+
+                return Arrays.asList((String[]) vanityPath);
+            } else {
+
+                return vanityPath;
+            }
+        }
+
+        return null;
     }
 }

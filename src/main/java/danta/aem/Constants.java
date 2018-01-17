@@ -36,6 +36,7 @@ public class Constants {
     public static final String SLING_FOLDER = "sling:Folder";
     public static final String SLING_RESOURCE_TYPE = "sling:resourceType";
     public static final String SLING_RESOURCE_SUPER_TYPE = "sling:resourceSuperType";
+    public static final String SLING_VANITY_PATH = "sling:vanityPath";
     public static final String FOUNDATION_IMAGE_COMPONENT_RESOURCE_TYPE = "foundation/components/image";
     public static final String CONTENT_ROOT = "/content";
     public static final String APPS_ROOT = "/apps";
