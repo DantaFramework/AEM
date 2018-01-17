@@ -24,9 +24,6 @@ import org.apache.sling.api.SlingHttpServletRequest;
 import org.apache.sling.api.SlingHttpServletResponse;
 
 import javax.servlet.http.HttpServletResponse;
-import javax.servlet.http.HttpServletResponseWrapper;
-import java.io.CharArrayWriter;
-import java.io.PrintWriter;
 import java.util.*;
 
 import static danta.aem.Constants.SLING_HTTP_REQUEST;
