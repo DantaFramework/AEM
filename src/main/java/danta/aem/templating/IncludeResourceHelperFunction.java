@@ -25,6 +25,7 @@ import danta.core.util.UrlUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.felix.scr.annotations.*;
 import org.apache.sling.api.SlingHttpServletRequest;
+import org.apache.sling.api.SlingHttpServletResponse;
 import org.apache.sling.api.request.RequestDispatcherOptions;
 import org.apache.sling.api.resource.NonExistingResource;
 import org.apache.sling.api.resource.Resource;
@@ -37,7 +38,10 @@ import org.slf4j.LoggerFactory;
 
 import javax.servlet.RequestDispatcher;
 import javax.servlet.http.HttpServletResponse;
+import javax.servlet.http.HttpServletResponseWrapper;
 import java.io.IOException;
+import java.io.CharArrayWriter;
+import java.io.PrintWriter;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 import java.util.regex.PatternSyntaxException;
@@ -137,13 +141,29 @@ public class IncludeResourceHelperFunction
             com.day.cq.wcm.api.components.Component component = componentManager.getComponentOfResource(resource);
 
             dispatcher = request.getRequestDispatcher(resource, opts);
-            HttpServletResponse wrappedResponse = contentModel().wrappedResponse();
+            HttpServletResponse wrappedResponse = wrapResponse(contentModel().response());
             dispatcher.include(request, wrappedResponse);
             responseString = wrappedResponse.toString();
         } else {
             LOG.error("{} It is not valid", path);
         }
         return new Handlebars.SafeString(responseString);
+    }
+
+    private final HttpServletResponse wrapResponse(HttpServletResponse response) {
+        HttpServletResponseWrapper wrappedResponse = new HttpServletResponseWrapper(response) {
+            final CharArrayWriter output = new CharArrayWriter();
+
+            public String toString() {
+                return output.toString();
+            }
+
+            public PrintWriter getWriter() {
+                return new PrintWriter(output);
+            }
+        };
+
+        return wrappedResponse;
     }
 
     private final String attachSuffixOrPrefix(String path, String prefix, String suffix) {

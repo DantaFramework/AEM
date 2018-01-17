@@ -65,29 +65,4 @@ public class TemplateContentModelImpl
             throws Exception {
         return response;
     }
-
-    final HttpServletResponse wrappedResponse()
-            throws Exception {
-
-        return new CharResponseWrapper(response());
-    }
-
-    static final class CharResponseWrapper
-            extends HttpServletResponseWrapper {
-
-        private CharArrayWriter output;
-
-        public CharResponseWrapper(HttpServletResponse response) {
-            super(response);
-            output = new CharArrayWriter();
-        }
-
-        public String toString() {
-            return output.toString();
-        }
-
-        public PrintWriter getWriter() {
-            return new PrintWriter(output);
-        }
-    }
 }
