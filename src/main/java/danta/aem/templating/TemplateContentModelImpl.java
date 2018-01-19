@@ -24,9 +24,6 @@ import org.apache.sling.api.SlingHttpServletRequest;
 import org.apache.sling.api.SlingHttpServletResponse;
 
 import javax.servlet.http.HttpServletResponse;
-import javax.servlet.http.HttpServletResponseWrapper;
-import java.io.CharArrayWriter;
-import java.io.PrintWriter;
 import java.util.*;
 
 import static danta.aem.Constants.SLING_HTTP_REQUEST;
@@ -64,30 +61,5 @@ public class TemplateContentModelImpl
     final HttpServletResponse response()
             throws Exception {
         return response;
-    }
-
-    final HttpServletResponse wrappedResponse()
-            throws Exception {
-
-        return new CharResponseWrapper(response());
-    }
-
-    static final class CharResponseWrapper
-            extends HttpServletResponseWrapper {
-
-        private CharArrayWriter output;
-
-        public CharResponseWrapper(HttpServletResponse response) {
-            super(response);
-            output = new CharArrayWriter();
-        }
-
-        public String toString() {
-            return output.toString();
-        }
-
-        public PrintWriter getWriter() {
-            return new PrintWriter(output);
-        }
     }
 }
