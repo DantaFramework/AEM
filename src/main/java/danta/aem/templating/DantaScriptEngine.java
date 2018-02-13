@@ -134,6 +134,7 @@ public class DantaScriptEngine
                 ExecutionContextImpl executionContext = new ExecutionContextImpl();
                 executionContext.put(SLING_HTTP_REQUEST, request);
                 executionContext.put(ENGINE_RESOURCE, resource.getResourceType());
+                executionContext.put(CONFIGURATION_PROVIDER, configurationProvider);
 
                 List<String> currentProcessorChain = contextProcessorEngine.execute(executionContext, contentModel);
 

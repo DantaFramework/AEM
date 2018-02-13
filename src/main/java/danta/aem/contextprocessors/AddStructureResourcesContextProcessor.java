@@ -24,11 +24,11 @@ import com.day.cq.wcm.commons.WCMUtils;
 import com.day.cq.wcm.foundation.TemplatedContainer;
 import com.google.common.collect.Sets;
 import danta.aem.templating.TemplateContentModelImpl;
+import danta.api.ContextProcessor;
 import danta.api.ExecutionContext;
 import danta.api.exceptions.ProcessException;
 import danta.core.contextprocessors.AbstractCheckComponentCategoryContextProcessor;
-import org.apache.felix.scr.annotations.Component;
-import org.apache.felix.scr.annotations.Service;
+import org.osgi.service.component.annotations.Component;
 import org.apache.sling.api.SlingHttpServletRequest;
 import org.apache.sling.api.resource.Resource;
 
@@ -46,8 +46,7 @@ import static danta.aem.Constants.STRUCTURE_RESOURCES_CATEGORY;
  * @version     1.0.0
  * @since       2017-11-22
  */
-@Component
-@Service
+@Component(service = ContextProcessor.class)
 public class AddStructureResourcesContextProcessor
         extends AbstractCheckComponentCategoryContextProcessor<TemplateContentModelImpl> {
 

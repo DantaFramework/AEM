@@ -18,7 +18,7 @@
 
 package danta.aem.servlets;
 
-import org.apache.felix.scr.annotations.Reference;
+import org.osgi.service.component.annotations.Reference;
 import org.apache.sling.api.SlingHttpServletRequest;
 import org.apache.sling.api.SlingHttpServletResponse;
 import org.apache.sling.api.resource.ResourceResolverFactory;

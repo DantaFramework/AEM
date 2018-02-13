@@ -22,14 +22,19 @@ import danta.aem.services.ContentModelFactoryService;
 import danta.aem.templating.TemplateContentModelImpl;
 import danta.api.ContentModel;
 import danta.api.ContextProcessorEngine;
+import danta.api.configuration.ConfigurationProvider;
 import danta.core.execution.ExecutionContextImpl;
-import org.apache.felix.scr.annotations.*;
+import org.osgi.service.component.annotations.Component;
+import org.osgi.service.component.annotations.Reference;
+import org.osgi.service.component.annotations.ReferenceCardinality;
+import org.osgi.service.component.annotations.ReferencePolicy;
 import org.apache.sling.api.SlingHttpServletRequest;
 import org.apache.sling.api.SlingHttpServletResponse;
 import org.apache.sling.api.resource.Resource;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import static danta.Constants.CONFIGURATION_PROVIDER;
 import static danta.Constants.ENGINE_RESOURCE;
 import static danta.aem.Constants.SLING_HTTP_REQUEST;
 
@@ -40,13 +45,15 @@ import static danta.aem.Constants.SLING_HTTP_REQUEST;
  * @version     1.0.0
  * @since       2014-03-12
  */
-@Component
-@Service(ContentModelFactoryService.class)
+@Component(service = ContentModelFactoryService.class)
 public class ContentModelFactoryServiceImpl
         implements ContentModelFactoryService {
 
-    @Reference(cardinality = ReferenceCardinality.MANDATORY_UNARY, policy = ReferencePolicy.STATIC)
+    @Reference(cardinality = ReferenceCardinality.MANDATORY, policy = ReferencePolicy.STATIC)
     protected ContextProcessorEngine contextProcessorEngine;
+
+    @Reference(cardinality = ReferenceCardinality.MANDATORY, policy = ReferencePolicy.STATIC)
+    private ConfigurationProvider configurationProvider;
 
     private final Logger LOG = LoggerFactory.getLogger(this.getClass());
 
@@ -66,6 +73,7 @@ public class ContentModelFactoryServiceImpl
                 ExecutionContextImpl executionContext = new ExecutionContextImpl();
                 executionContext.put(SLING_HTTP_REQUEST, request);
                 executionContext.put(ENGINE_RESOURCE, resource.getResourceType());
+                executionContext.put(CONFIGURATION_PROVIDER, configurationProvider);
                 contextProcessorEngine.execute(executionContext, contentModel);
             }
 

@@ -19,10 +19,12 @@
 package danta.aem.contextprocessors.domprocesors;
 
 import danta.aem.contextprocessors.AddStylingContextProcessor;
+import danta.api.DOMProcessor;
 import danta.api.ExecutionContext;
 import danta.api.exceptions.ProcessException;
-import org.apache.felix.scr.annotations.Component;
-import org.apache.felix.scr.annotations.Service;
+//import org.apache.felix.scr.annotations.Component;
+//import org.apache.felix.scr.annotations.Service;
+import org.osgi.service.component.annotations.Component;
 import org.jsoup.nodes.Document;
 import org.jsoup.nodes.Element;
 import org.jsoup.select.Elements;
@@ -37,8 +39,7 @@ import static danta.Constants.HIGHEST_PRIORITY;
  * @version     1.0.0
  * @since       2014-09-04
  */
-@Component
-@Service
+@Component(service = DOMProcessor.class)
 public class XKSectionStylesDOMProcessor
         extends AbstractDOMProcessor {
 

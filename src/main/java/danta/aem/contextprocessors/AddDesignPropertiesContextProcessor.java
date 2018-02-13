@@ -23,11 +23,11 @@ import com.day.cq.wcm.api.designer.Style;
 import com.google.common.collect.Sets;
 import danta.aem.templating.TemplateContentModelImpl;
 import danta.aem.util.PropertyUtils;
+import danta.api.ContextProcessor;
 import danta.api.ExecutionContext;
 import danta.api.exceptions.ProcessException;
 import danta.core.contextprocessors.AbstractCheckComponentCategoryContextProcessor;
-import org.apache.felix.scr.annotations.Component;
-import org.apache.felix.scr.annotations.Service;
+import org.osgi.service.component.annotations.Component;
 import org.apache.sling.api.SlingHttpServletRequest;
 import org.apache.sling.api.resource.Resource;
 import org.apache.sling.api.resource.ResourceResolver;
@@ -48,8 +48,7 @@ import static danta.aem.Constants.SLING_HTTP_REQUEST;
  * @version     1.0.0
  * @since       2013-04-09
  */
-@Component
-@Service
+@Component(service = ContextProcessor.class)
 public class AddDesignPropertiesContextProcessor
         extends AbstractCheckComponentCategoryContextProcessor<TemplateContentModelImpl>  {
 

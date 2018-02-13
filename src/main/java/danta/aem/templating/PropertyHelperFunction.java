@@ -19,8 +19,7 @@
 package danta.aem.templating;
 
 import com.github.jknack.handlebars.Handlebars;
-import org.apache.felix.scr.annotations.Component;
-import org.apache.felix.scr.annotations.Service;
+import org.osgi.service.component.annotations.Component;
 
 import static danta.Constants.BLANK;
 
@@ -34,8 +33,7 @@ import static danta.Constants.BLANK;
  * @version     1.0.0
  * @since       2013-10-30
  */
-@Component
-@Service
+@Component(service = HelperFunction.class)
 public class PropertyHelperFunction
         extends AbstractAEMHelperFunction<String> {
 

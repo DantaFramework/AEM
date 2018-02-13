@@ -21,10 +21,13 @@ package danta.aem.templating;
 import danta.api.ContextProcessorEngine;
 import danta.api.DOMProcessorEngine;
 import danta.api.configuration.ConfigurationProvider;
-import org.apache.felix.scr.annotations.*;
+import org.osgi.service.component.annotations.Component;
+import org.osgi.service.component.annotations.Reference;
+import org.osgi.service.component.annotations.ReferenceCardinality;
+import org.osgi.service.component.annotations.ReferencePolicy;
+import javax.script.ScriptEngineFactory;
 import org.apache.sling.api.resource.ResourceResolverFactory;
 import org.apache.sling.scripting.api.AbstractScriptEngineFactory;
-
 import javax.script.ScriptEngine;
 import java.util.ArrayList;
 import java.util.List;
@@ -38,16 +41,13 @@ import java.util.List;
  * @since       2016-07-27
  */
 @Component(
-        label = "Apache Sling Scripting Danta",
-        description = "Scripting engine for Danta",
         immediate = true,
-        metatype = true
+        service = ScriptEngineFactory.class,
+        property = {
+            "service.description=Scripting engine for Danta",
+            "service.ranking=0"
+        }
 )
-@Service
-@Properties({
-        @Property(name = "service.description", value = "Scripting engine for Danta"),
-        @Property(name = "service.ranking", intValue = 0, propertyPrivate = false)
-})
 public class DantaScriptEngineFactory
         extends AbstractScriptEngineFactory {
 
@@ -56,19 +56,19 @@ public class DantaScriptEngineFactory
     protected final static String LANGUAGE_VERSION = "1.0";
     protected final static String LX_EXT = "d";
 
-    @Reference(cardinality = ReferenceCardinality.MANDATORY_UNARY, policy = ReferencePolicy.STATIC)
+    @Reference(cardinality = ReferenceCardinality.MANDATORY, policy = ReferencePolicy.STATIC)
     private ContextProcessorEngine contextProcessorEngine;
 
-    @Reference(cardinality = ReferenceCardinality.MANDATORY_UNARY, policy = ReferencePolicy.STATIC)
+    @Reference(cardinality = ReferenceCardinality.MANDATORY, policy = ReferencePolicy.STATIC)
     private ConfigurationProvider configurationProvider;
 
-    @Reference(cardinality = ReferenceCardinality.MANDATORY_UNARY, policy = ReferencePolicy.STATIC)
+    @Reference(cardinality = ReferenceCardinality.MANDATORY, policy = ReferencePolicy.STATIC)
     private ResourceResolverFactory resourceResolverFactory;
 
-    @Reference(cardinality = ReferenceCardinality.MANDATORY_UNARY, policy = ReferencePolicy.STATIC)
+    @Reference(cardinality = ReferenceCardinality.MANDATORY, policy = ReferencePolicy.STATIC)
     private DOMProcessorEngine domProcessorEngine;
 
-    @Reference(cardinality = ReferenceCardinality.MANDATORY_UNARY, policy = ReferencePolicy.STATIC)
+    @Reference(cardinality = ReferenceCardinality.MANDATORY, policy = ReferencePolicy.STATIC)
     private HelperFunctionBind helperFunctionBind;
 
     public DantaScriptEngineFactory() {

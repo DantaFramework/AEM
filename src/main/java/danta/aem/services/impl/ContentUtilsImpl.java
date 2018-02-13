@@ -21,9 +21,8 @@ package danta.aem.services.impl;
 import com.day.cq.contentsync.handler.util.RequestResponseFactory;
 import com.day.cq.wcm.api.WCMMode;
 import danta.aem.services.ContentUtils;
-import org.apache.felix.scr.annotations.Component;
-import org.apache.felix.scr.annotations.Reference;
-import org.apache.felix.scr.annotations.Service;
+import org.osgi.service.component.annotations.Component;
+import org.osgi.service.component.annotations.Reference;
 import org.apache.sling.api.SlingHttpServletRequest;
 import org.apache.sling.api.resource.ResourceResolver;
 import org.apache.sling.engine.SlingRequestProcessor;
@@ -45,8 +44,7 @@ import static danta.Constants.HTTP_GET;
  * @version     1.0.0
  * @since       2016-12-01
  */
-@Component
-@Service(ContentUtils.class)
+@Component(service = ContentUtils.class)
 public class ContentUtilsImpl
         implements ContentUtils {
 

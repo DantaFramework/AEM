@@ -23,7 +23,11 @@ import com.github.jknack.handlebars.Handlebars;
 import danta.api.configuration.ConfigurationProvider;
 import danta.core.util.UrlUtils;
 import org.apache.commons.lang3.StringUtils;
-import org.apache.felix.scr.annotations.*;
+import org.osgi.service.component.annotations.Component;
+import org.osgi.service.component.annotations.Reference;
+import org.osgi.service.component.annotations.ReferencePolicy;
+import org.osgi.service.component.annotations.ReferenceCardinality;
+import org.osgi.service.component.annotations.Activate;
 import org.apache.sling.api.SlingHttpServletRequest;
 import org.apache.sling.api.request.RequestDispatcherOptions;
 import org.apache.sling.api.resource.NonExistingResource;
@@ -32,6 +36,9 @@ import org.apache.sling.api.resource.ResourceResolver;
 import org.apache.sling.api.resource.ResourceUtil;
 import org.apache.sling.commons.osgi.OsgiUtil;
 import org.osgi.service.component.ComponentContext;
+import org.osgi.service.metatype.annotations.AttributeDefinition;
+import org.osgi.service.metatype.annotations.Designate;
+import org.osgi.service.metatype.annotations.ObjectClassDefinition;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -53,13 +60,13 @@ import static danta.Constants.*;
  * <p>
  * Examples:
  * <pre><blockquote>
- *      {%#include "exampleComp" resourceType="myCompany/components/section/titleexample"%}{%/include%}
+ *      {%include "exampleComp" resourceType="myCompany/components/section/titleexample"%}
  * </blockquote></pre>
  * <pre><blockquote>
- *      {%#include "examplePar" resourceType="foundation/components/parsys"%}{%/include%}
+ *      {%include "examplePar" resourceType="foundation/components/parsys"%}
  * </blockquote></pre>
  * <pre><blockquote>
- *      {%#include "examplePar" resourceType="foundation/components/parsys" prefix="ColumnOne"%}{%/include%}
+ *      {%include "examplePar" resourceType="foundation/components/parsys" prefix="ColumnOne"%}
  * </blockquote></pre>
  * <p>
  * The first argument is a name. the second parameter is the relative path of the component.
@@ -80,18 +87,12 @@ import static danta.Constants.*;
  * @version     1.0.0
  * @since       2013-11-09
  */
-@Component(label = "Include Resource Helper Function Configuration", metatype = true)
-@Service
-@Properties({
-        @Property(name = IncludeResourceHelperFunction.CONFIG_CHARACTERS_PROPERTY,
-                value = IncludeResourceHelperFunction.DEFAULT_INVALID_CHARACTERS,
-                label="Invalid characteres",
-                description = "Regular expression for invalid characters in the resource name. Default value: [ \\t$&+,:;=?@#|'<>.^*()%!~\\[\\]{}] "),
-})
+@Component(service = HelperFunction.class)
+@Designate(ocd=IncludeResourceHelperFunction.Configuration.class)
 public class IncludeResourceHelperFunction
         extends AbstractAEMHelperFunction<String> {
 
-    @Reference(cardinality = ReferenceCardinality.MANDATORY_UNARY, policy = ReferencePolicy.STATIC)
+    @Reference(cardinality = ReferenceCardinality.MANDATORY, policy = ReferencePolicy.STATIC)
     protected ConfigurationProvider configurationProvider;
 
     protected final Logger LOG = LoggerFactory.getLogger(this.getClass());
@@ -236,7 +237,17 @@ public class IncludeResourceHelperFunction
     }
 
     @Activate
-    public void activate(final ComponentContext context) throws Exception {
+    protected void activate(final ComponentContext context) throws Exception {
         this.configCharacters = OsgiUtil.toString(context.getProperties().get(CONFIG_CHARACTERS_PROPERTY), DEFAULT_INVALID_CHARACTERS);
+    }
+
+    @ObjectClassDefinition(name = "Include Resource Helper Function Configuration")
+    public @interface Configuration {
+
+        @AttributeDefinition(name = "Invalid characteres", description="Regular expression for invalid characters " +
+                "in the resource name. Default value: [ \\\\t$&+,:;=?@#|'<>.^*()%!~\\\\[\\\\]{}]" +
+                "Format: widthxheight")
+        String invalidCharacteres() default DEFAULT_INVALID_CHARACTERS;
+
     }
 }

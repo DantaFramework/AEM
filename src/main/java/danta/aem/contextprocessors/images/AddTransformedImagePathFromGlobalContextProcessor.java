@@ -20,13 +20,13 @@ package danta.aem.contextprocessors.images;
 
 import com.google.common.collect.Sets;
 import danta.aem.assets.AssetPathService;
+import danta.api.ContextProcessor;
 import danta.api.ExecutionContext;
 import danta.api.TemplateContentModel;
 import danta.api.exceptions.ProcessException;
 import org.apache.commons.lang3.StringUtils;
-import org.apache.felix.scr.annotations.Component;
-import org.apache.felix.scr.annotations.Reference;
-import org.apache.felix.scr.annotations.Service;
+import org.osgi.service.component.annotations.Component;
+import org.osgi.service.component.annotations.Reference;
 import org.apache.sling.api.SlingHttpServletRequest;
 import org.apache.sling.api.resource.Resource;
 
@@ -44,8 +44,7 @@ import static danta.aem.Constants.SLING_HTTP_REQUEST;
  * @version     1.0.0
  * @since       2016-03-25
  */
-@Component
-@Service
+@Component(service = ContextProcessor.class)
 public class AddTransformedImagePathFromGlobalContextProcessor
         extends AbstractImageContextProcessor<TemplateContentModel> {
 

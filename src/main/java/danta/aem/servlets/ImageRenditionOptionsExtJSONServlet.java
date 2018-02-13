@@ -20,13 +20,16 @@ package danta.aem.servlets;
 
 import danta.api.configuration.Configuration;
 import danta.api.configuration.ConfigurationProvider;
-import org.apache.felix.scr.annotations.*;
+import org.osgi.service.component.annotations.Component;
+import org.osgi.service.component.annotations.Reference;
+import org.osgi.service.component.annotations.ReferenceCardinality;
+import org.osgi.service.component.annotations.ReferencePolicy;
 import org.apache.sling.api.SlingHttpServletRequest;
 
+import javax.servlet.Servlet;
 import java.util.Collection;
 
 import static danta.Constants.DOT;
-import static danta.Constants.JSON;
 import static danta.aem.Constants.AVAILABLE_RENDITIONS;
 
 /**
@@ -36,21 +39,14 @@ import static danta.aem.Constants.AVAILABLE_RENDITIONS;
  * @version     1.0.0
  * @since       2014-06-04
  */
-@Component
-@Service
-@Properties({
-        @Property(name = "service.description", value = "Image Rendition Options Ext JSON Servlet"),
-        @Property(name = "sling.servlet.selectors", value = ImageRenditionOptionsExtJSONServlet.IMAGE_RENDITIONS_SELECTORS),
-        @Property(name = "sling.servlet.extensions", value = JSON),
-        @Property(name = "sling.servlet.resourceTypes", value = "sling/servlet/default")
-})
+@Component(service = Servlet.class)
 public class ImageRenditionOptionsExtJSONServlet
         extends AbstractExtJSONServlet {
 
     public static final String OPTIONS = "options";
     public static final String IMAGE_RENDITIONS_SELECTORS = "renditions" + DOT + OPTIONS;
 
-    @Reference(cardinality = ReferenceCardinality.MANDATORY_UNARY, policy = ReferencePolicy.STATIC)
+    @Reference(cardinality = ReferenceCardinality.MANDATORY, policy = ReferencePolicy.STATIC)
     protected ConfigurationProvider configurationProvider;
 
     @Override

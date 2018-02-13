@@ -29,8 +29,11 @@ import danta.aem.util.ResourceUtils;
 import danta.api.configuration.ConfigurationProvider;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.lang3.math.NumberUtils;
-import org.apache.felix.scr.annotations.*;
-import org.apache.felix.scr.annotations.Component;
+import org.osgi.service.component.annotations.Component;
+import org.osgi.service.component.annotations.Reference;
+import org.osgi.service.component.annotations.ReferenceCardinality;
+import org.osgi.service.component.annotations.ReferencePolicy;
+import org.osgi.service.component.annotations.Activate;
 import org.apache.sling.api.SlingHttpServletRequest;
 import org.apache.sling.api.SlingHttpServletResponse;
 import org.apache.sling.api.resource.Resource;
@@ -39,6 +42,9 @@ import org.apache.sling.api.servlets.OptingServlet;
 import org.apache.sling.api.servlets.SlingSafeMethodsServlet;
 import org.apache.sling.commons.osgi.PropertiesUtil;
 import org.osgi.service.component.ComponentContext;
+import org.osgi.service.metatype.annotations.AttributeDefinition;
+import org.osgi.service.metatype.annotations.Designate;
+import org.osgi.service.metatype.annotations.ObjectClassDefinition;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -52,10 +58,8 @@ import java.awt.*;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
-import java.util.Dictionary;
-import java.util.HashMap;
+import java.util.*;
 import java.util.List;
-import java.util.Map;
 
 import static com.day.cq.commons.jcr.JcrConstants.JCR_DATA;
 import static com.day.cq.commons.jcr.JcrConstants.JCR_MIMETYPE;
@@ -76,65 +80,33 @@ import static danta.aem.Constants.*;
  * @since       2013-11-15
  */
 @Component(
-        label = "Asset Provider Servlet",
-        description = "Uses the path to the resource to retrieve the DAM Asset related to it.",
-        metatype = true
+        service = Servlet.class,
+        property = {
+                "sling.servlet.extensions=" + ASSET_EXTENSION,
+                "sling.servlet.selectors=" + ASSET_SELECTOR,
+                "sling.servlet.resourceTypes=sling/servlet/default",
+                "sling.servlet.resourceTypes=" + FOUNDATION_IMAGE_COMPONENT_RESOURCE_TYPE
+        }
 )
-@Properties({
-        @Property(
-                label = "Resource Types",
-                description = "Resource Types and Node Types to bind this servlet to.",
-                name = "sling.servlet.resourceTypes",
-                value = {"sling/servlet/default", FOUNDATION_IMAGE_COMPONENT_RESOURCE_TYPE},
-                propertyPrivate = false
-        ),
-        @Property(
-                label = "Max dimensions",
-                description = "All images bigger than these dimensions will be resized before applying the transforms" +
-                        "Note: if the image path doesn't contain any transform, the image won't be resized. " +
-                        "Format: widthxheight",
-                name = AssetProviderServlet.MAX_DIMENSIONS_PN,
-                value = {"1280x720"},
-                propertyPrivate = false
-        ),
-        @Property(
-                label = "Extension",
-                description = "",
-                name = "sling.servlet.extensions",
-                value = { ASSET_EXTENSION },
-                propertyPrivate = true
-        ),
-        @Property(
-                name = "sling.servlet.methods",
-                value = { "GET" },
-                propertyPrivate = true
-        ),
-        @Property(name = "sling.servlet.selectors",
-                value = ASSET_SELECTOR,
-                propertyPrivate = true)
-})
-@Reference(
-        name = "namedImageTransformers",
-        referenceInterface = NamedImageTransformer.class,
-        policy = ReferencePolicy.DYNAMIC,
-        cardinality = ReferenceCardinality.OPTIONAL_MULTIPLE
-)
-@Service(Servlet.class) //TODO: Create documentation and add javadocs
+@Designate(ocd=AssetProviderServlet.Configuration.class)
 @SuppressWarnings("unchecked")
-public class AssetProviderServlet extends SlingSafeMethodsServlet implements OptingServlet{
+public class AssetProviderServlet extends SlingSafeMethodsServlet implements OptingServlet {
 
-    @Reference(cardinality = ReferenceCardinality.MANDATORY_UNARY, policy = ReferencePolicy.STATIC)
+    @Reference(cardinality = ReferenceCardinality.MULTIPLE, policy = ReferencePolicy.DYNAMIC,
+            bind = "bindNamedImageTransformers",
+            unbind = "unbindNamedImageTransformers")
+    private List<NamedImageTransformer> namedImageTransformerList = new ArrayList<>();
+
+    @Reference(cardinality = ReferenceCardinality.MANDATORY, policy = ReferencePolicy.STATIC)
     protected ResourceResolverFactory resourceResolverFactory;
 
-    @Reference(cardinality = ReferenceCardinality.MANDATORY_UNARY, policy = ReferencePolicy.STATIC)
+    @Reference(cardinality = ReferenceCardinality.MANDATORY, policy = ReferencePolicy.STATIC)
     protected ConfigurationProvider configurationProvider;
 
-    private Map<String, NamedImageTransformer> namedImageTransformers = new HashMap();
     private final Logger LOGGER = LoggerFactory.getLogger(AssetProviderServlet.class);
     protected static final String MAX_DIMENSIONS_PN = "maxDimensions";
     private int maxHeight = 1280;
     private int maxWidth = 720;
-
 
     /**
      * Only accept requests that.
@@ -171,11 +143,17 @@ public class AssetProviderServlet extends SlingSafeMethodsServlet implements Opt
     @SuppressWarnings("unchecked")
     protected void doGet(final SlingHttpServletRequest request, final SlingHttpServletResponse response)
             throws IOException, ServletException {
+
+        Map<String, NamedImageTransformer> namedImageTransformers = new HashMap<>();
+        for(NamedImageTransformer transformer: namedImageTransformerList){
+            namedImageTransformers.put(transformer.getTransformName(), transformer);
+        }
+
         //TODO: put all of the logic in a context processor (need to fix templating support filter bug first)
         String transformName = BLANK;
         if (PathInfoUtil.getSuffixSegments(request).length == 2) {
             String firstSuffixSegment = PathInfoUtil.getFirstSuffixSegment(request);
-            if (this.namedImageTransformers.keySet().contains(firstSuffixSegment)) {
+            if (namedImageTransformers.containsKey(firstSuffixSegment)) {
                 transformName = firstSuffixSegment;
             }
         }
@@ -211,7 +189,8 @@ public class AssetProviderServlet extends SlingSafeMethodsServlet implements Opt
                         final Layer layer = new Layer(inputStream, new Dimension(maxWidth, maxHeight));
                         Layer newLayer = null;
                         try {
-                            final NamedImageTransformer namedImageTransformer = this.namedImageTransformers.get(transformName);
+                            final NamedImageTransformer namedImageTransformer = namedImageTransformers.get(transformName);
+
                             newLayer = namedImageTransformer.transform(layer);
 
                             if (StringUtils.isBlank(mimeType) || !ImageIO.getImageWritersByMIMEType(mimeType).hasNext()) {
@@ -247,20 +226,12 @@ public class AssetProviderServlet extends SlingSafeMethodsServlet implements Opt
         }
     }
 
-    protected final void bindNamedImageTransformers(final NamedImageTransformer service,
-                                                    final Map<Object, Object> props) {
-        final String type = PropertiesUtil.toString(props.get(NamedImageTransformer.PROP_NAME), null);
-        if (type != null) {
-            this.namedImageTransformers.put(type, service);
-        }
+    private void bindNamedImageTransformers(NamedImageTransformer namedImageTransformer) {
+        namedImageTransformerList.add(namedImageTransformer);
     }
 
-    protected final void unbindNamedImageTransformers(final NamedImageTransformer service,
-                                                      final Map<Object, Object> props) {
-        final String type = PropertiesUtil.toString(props.get(NamedImageTransformer.PROP_NAME), null);
-        if (type != null) {
-            this.namedImageTransformers.remove(type);
-        }
+    private void unbindNamedImageTransformers(NamedImageTransformer namedImageTransformer) {
+        namedImageTransformerList.remove(namedImageTransformer);
     }
 
     private Resource getAssetResource(SlingHttpServletRequest request) {
@@ -318,4 +289,14 @@ public class AssetProviderServlet extends SlingSafeMethodsServlet implements Opt
         return mimeType;
     }
 
+    @ObjectClassDefinition(name = "Asset Provider Servlet Configuration",
+            description = "Uses the path to the resource to retrieve the DAM Asset related to it.")
+    public @interface Configuration {
+
+        @AttributeDefinition(name = "Max image dimensions", description="All images bigger than these dimensions will be resized before applying the transforms" +
+                "Note: if the image path doesn't contain any transform, the image won't be resized. " +
+                "Format: widthxheight")
+        String maxDimensions() default "1280x720";
+
+    }
 }

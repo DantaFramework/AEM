@@ -21,8 +21,6 @@ package danta.aem.contextprocessors.images;
 import com.google.common.collect.Sets;
 import danta.api.ContentModel;
 import danta.core.contextprocessors.AbstractCheckComponentCategoryContextProcessor;
-import org.apache.felix.scr.annotations.Component;
-import org.apache.felix.scr.annotations.Service;
 
 import java.util.Collections;
 import java.util.Set;
@@ -36,8 +34,6 @@ import static danta.Constants.IMAGE_CATEGORY;
  * @version     1.0.0
  * @since       2014-09-04
  */
-@Component(componentAbstract = true)
-@Service
 public abstract class AbstractImageContextProcessor<C extends ContentModel>
         extends AbstractCheckComponentCategoryContextProcessor<C>
         implements ImageContextProcessor<C> {

@@ -21,15 +21,21 @@ package danta.aem.contextprocessors.lists;
 import com.day.cq.wcm.api.Page;
 import com.day.cq.wcm.api.PageManager;
 import com.google.common.collect.Sets;
+import danta.aem.assets.AssetPathService;
 import danta.aem.util.GeneralRequestObjects;
+import danta.api.ContextProcessor;
 import danta.api.ExecutionContext;
 import danta.api.TemplateContentModel;
+import danta.api.configuration.Configuration;
+import danta.api.configuration.ConfigurationProvider;
 import danta.api.exceptions.ProcessException;
-import org.apache.felix.scr.annotations.Component;
-import org.apache.felix.scr.annotations.Service;
+import org.osgi.service.component.annotations.Component;
 import org.apache.sling.api.SlingHttpServletRequest;
 import org.apache.sling.api.resource.Resource;
 import org.apache.sling.api.resource.ResourceResolver;
+import org.osgi.service.component.annotations.Reference;
+import org.osgi.service.component.annotations.ReferenceCardinality;
+import org.osgi.service.component.annotations.ReferencePolicy;
 
 import java.util.*;
 
@@ -44,8 +50,7 @@ import static danta.aem.Constants.SLING_HTTP_REQUEST;
  * @version     1.0.0
  * @since       2014-08-16
  */
-@Component
-@Service
+@Component(service = ContextProcessor.class)
 public class AddPageDetailsContextProcessor
         extends AbstractPageDetailsContextProcessor {
 
@@ -54,6 +59,12 @@ public class AddPageDetailsContextProcessor
             Collections.unmodifiableSet(Sets.newHashSet(CURATED_LIST_CATEGORY, TRAVERSED_LIST_CATEGORY));
 
     protected static final int PRIORITY = AddCuratedPageReferencesContextProcessor.PRIORITY - 20;
+
+    @Reference
+    protected AssetPathService assetPathService;
+
+    @Reference(cardinality = ReferenceCardinality.MANDATORY, policy = ReferencePolicy.STATIC)
+    private ConfigurationProvider configurationProvider;
 
     @Override
     public Set<String> allOf() {
@@ -108,6 +119,18 @@ public class AddPageDetailsContextProcessor
             }
         }
         return pageDetails;
+    }
+
+    @Override
+    protected Collection<String> getExtraPropertyNames(Resource componentResource) throws Exception {
+        Configuration configuration = configurationProvider.getFor(componentResource.getResourceType());
+        Collection<String> extraPropertyNames = configuration.asStrings(EXTRA_LIST_PROPERTIES_CONFIG_KEY);
+        return extraPropertyNames;
+    }
+
+    @Override
+    protected String pageImagePath(Page page, Resource componentResource) throws Exception {
+        return assetPathService.getPageImagePath(page, componentResource);
     }
 
 }

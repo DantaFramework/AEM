@@ -19,7 +19,6 @@
 package danta.aem.contextprocessors.domprocesors;
 
 import danta.api.DOMProcessor;
-import org.apache.felix.scr.annotations.Component;
 
 import static danta.Constants.LOW_PRIORITY;
 
@@ -31,7 +30,6 @@ import static danta.Constants.LOW_PRIORITY;
  * @version     1.0.0
  * @since       2014-09-04
  */
-@Component(componentAbstract = true)
 public abstract class AbstractDOMProcessor
         implements DOMProcessor {
     /**

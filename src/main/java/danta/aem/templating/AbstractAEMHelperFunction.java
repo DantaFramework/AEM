@@ -20,7 +20,6 @@ package danta.aem.templating;
 
 import com.github.jknack.handlebars.Context;
 import com.github.jknack.handlebars.Options;
-import org.apache.felix.scr.annotations.Component;
 import org.apache.sling.api.SlingHttpServletRequest;
 
 import java.io.IOException;
@@ -36,7 +35,6 @@ import static danta.aem.Constants.SLING_HTTP_REQUEST;
  * @version     1.0.0
  * @since       2013-11-06
  */
-@Component (componentAbstract = true)
 public abstract class AbstractAEMHelperFunction<T>
         implements HelperFunction<T> {
 

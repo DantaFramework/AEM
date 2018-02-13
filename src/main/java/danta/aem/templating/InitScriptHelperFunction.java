@@ -28,7 +28,10 @@ import com.day.cq.wcm.commons.WCMUtils;
 import com.day.cq.wcm.undo.UndoConfigService;
 import com.github.jknack.handlebars.Handlebars;
 import danta.aem.util.ClientLibraryUtil;
-import org.apache.felix.scr.annotations.*;
+import org.osgi.service.component.annotations.Component;
+import org.osgi.service.component.annotations.Reference;
+import org.osgi.service.component.annotations.ReferenceCardinality;
+import org.osgi.service.component.annotations.ReferencePolicy;
 import org.apache.sling.api.SlingHttpServletRequest;
 import org.apache.sling.api.resource.ResourceResolver;
 import org.slf4j.Logger;
@@ -46,17 +49,16 @@ import static danta.Constants.BLANK;
  * @version     1.0.0
  * @since       2013-02-12
  */
-@Component
-@Service
+@Component(service = HelperFunction.class)
 public class InitScriptHelperFunction
         extends AbstractAEMHelperFunction<Object> {
 
     protected final Logger LOG = LoggerFactory.getLogger(this.getClass());
 
-    @Reference(cardinality = ReferenceCardinality.MANDATORY_UNARY, policy = ReferencePolicy.STATIC)
+    @Reference(cardinality = ReferenceCardinality.MANDATORY, policy = ReferencePolicy.STATIC)
     HtmlLibraryManager htmlLibraryManager;
 
-    @Reference(cardinality = ReferenceCardinality.MANDATORY_UNARY, policy = ReferencePolicy.STATIC)
+    @Reference(cardinality = ReferenceCardinality.MANDATORY, policy = ReferencePolicy.STATIC)
     UndoConfigService undoConfigService;
 
     public InitScriptHelperFunction() {

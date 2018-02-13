@@ -26,7 +26,10 @@ import danta.aem.util.ResourceUtils;
 import danta.api.configuration.Configuration;
 import danta.api.configuration.ConfigurationProvider;
 import org.apache.commons.lang3.StringUtils;
-import org.apache.felix.scr.annotations.*;
+import org.osgi.service.component.annotations.Component;
+import org.osgi.service.component.annotations.Reference;
+import org.osgi.service.component.annotations.ReferenceCardinality;
+import org.osgi.service.component.annotations.ReferencePolicy;
 import org.apache.sling.api.resource.Resource;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -44,13 +47,12 @@ import static danta.aem.Constants.*;
  * @version     1.0.0
  * @since       2014-09-22
  */
-@Component
-@Service
+@Component(service = AssetPathService.class)
 public class AssetPathServiceImpl implements AssetPathService {
 
     protected final Logger LOGGER = LoggerFactory.getLogger(AssetPathServiceImpl.class);
 
-    @Reference(cardinality = ReferenceCardinality.MANDATORY_UNARY, policy = ReferencePolicy.STATIC)
+    @Reference(cardinality = ReferenceCardinality.MANDATORY, policy = ReferencePolicy.STATIC)
     protected ConfigurationProvider configurationProvider;
 
     /**

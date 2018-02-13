@@ -24,11 +24,16 @@ import com.google.common.collect.Sets;
 import danta.aem.templating.TemplateContentModelImpl;
 import danta.aem.util.PropertyUtils;
 import danta.aem.util.ResourceUtils;
+import danta.api.ContextProcessor;
 import danta.api.ExecutionContext;
 import danta.api.configuration.Configuration;
+import danta.api.configuration.ConfigurationProvider;
 import danta.api.exceptions.ProcessException;
 import danta.core.contextprocessors.AbstractCheckComponentCategoryContextProcessor;
-import org.apache.felix.scr.annotations.*;
+import org.osgi.service.component.annotations.Component;
+import org.osgi.service.component.annotations.Reference;
+import org.osgi.service.component.annotations.ReferenceCardinality;
+import org.osgi.service.component.annotations.ReferencePolicy;
 import org.apache.sling.api.SlingHttpServletRequest;
 import org.apache.sling.api.resource.Resource;
 import org.apache.sling.api.resource.ResourceResolver;
@@ -51,16 +56,18 @@ import static danta.core.util.ObjectUtils.wrap;
  * @version     1.0.0
  * @since       2013-11-04
  */
-@Component
-@Service
+@Component(service = ContextProcessor.class)
 public class AddComponentPropertiesContextProcessor
         extends AbstractCheckComponentCategoryContextProcessor<TemplateContentModelImpl> {
 
     private static final Set<String> ANY_OF = Collections.unmodifiableSet(Sets.newHashSet(COMPONENT_CATEGORY));
 
+    @Reference(cardinality = ReferenceCardinality.MANDATORY, policy = ReferencePolicy.STATIC)
+    protected ConfigurationProvider configurationProvider;
+
     private static final String CONFIG_SERVICE = "config-service";
 
-    @Reference(cardinality = ReferenceCardinality.MANDATORY_UNARY, policy = ReferencePolicy.STATIC)
+    @Reference(cardinality = ReferenceCardinality.MANDATORY, policy = ReferencePolicy.STATIC)
     private ResourceResolverFactory resourceResolverFactory;
 
     @Override

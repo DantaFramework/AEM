@@ -18,15 +18,19 @@
 
 package danta.aem.contextprocessors.lists;
 
+import danta.api.ContextProcessor;
 import danta.api.ExecutionContext;
 import danta.api.TemplateContentModel;
 import danta.api.configuration.Configuration;
+import danta.api.configuration.ConfigurationProvider;
 import danta.api.configuration.Mode;
 import danta.api.exceptions.ProcessException;
-import org.apache.felix.scr.annotations.Component;
-import org.apache.felix.scr.annotations.Service;
+import org.osgi.service.component.annotations.Component;
 import org.apache.sling.api.SlingHttpServletRequest;
 import org.apache.sling.api.resource.Resource;
+import org.osgi.service.component.annotations.Reference;
+import org.osgi.service.component.annotations.ReferenceCardinality;
+import org.osgi.service.component.annotations.ReferencePolicy;
 
 import java.util.Collection;
 
@@ -40,12 +44,14 @@ import static danta.aem.Constants.SLING_HTTP_REQUEST;
  * @version     1.0.0
  * @since       2014-08-16
  */
-@Component
-@Service
+@Component(service = ContextProcessor.class)
 public class AddItemListConfigsContextProcessor
         extends AbstractItemListContextProcessor<TemplateContentModel> {
 
     protected static final int PRIORITY = AddItemListContextProcessor.PRIORITY - 10;
+
+    @Reference(cardinality = ReferenceCardinality.MANDATORY, policy = ReferencePolicy.STATIC)
+    private ConfigurationProvider configurationProvider;
 
     @Override
     public int priority() {

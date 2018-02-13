@@ -19,12 +19,12 @@
 package danta.aem.contextprocessors.lists;
 
 import com.google.common.collect.Sets;
+import danta.api.ContextProcessor;
 import danta.api.ExecutionContext;
 import danta.api.TemplateContentModel;
 import danta.api.exceptions.ProcessException;
 import net.minidev.json.JSONObject;
-import org.apache.felix.scr.annotations.Component;
-import org.apache.felix.scr.annotations.Service;
+import org.osgi.service.component.annotations.Component;
 
 import java.util.ArrayList;
 import java.util.Collection;
@@ -41,8 +41,7 @@ import static danta.Constants.*;
  * @version     1.0.0
  * @since       2014-08-16
  */
-@Component
-@Service
+@Component(service = ContextProcessor.class)
 public class AddCuratedPageReferencesContextProcessor
         extends AbstractItemListContextProcessor<TemplateContentModel> {
 

@@ -25,20 +25,24 @@ import danta.api.configuration.ConfigurationProvider;
 import danta.core.execution.ExecutionContextImpl;
 import net.minidev.json.JSONArray;
 import net.minidev.json.JSONObject;
-import org.apache.felix.scr.annotations.*;
+import org.osgi.service.component.annotations.Component;
+import org.osgi.service.component.annotations.Reference;
+import org.osgi.service.component.annotations.ReferenceCardinality;
+import org.osgi.service.component.annotations.ReferencePolicy;
 import org.apache.sling.api.SlingHttpServletRequest;
 import org.apache.sling.api.SlingHttpServletResponse;
 import org.apache.sling.api.resource.Resource;
 import org.apache.sling.api.servlets.SlingSafeMethodsServlet;
 
+import javax.servlet.Servlet;
 import javax.servlet.ServletException;
 import java.io.IOException;
 import java.io.PrintWriter;
 import java.util.List;
 
 import static danta.Constants.*;
-import static danta.aem.Constants.CLIENT_STATISTICS_CONTENT_MODEL_SELECTORS;
 import static danta.aem.Constants.SLING_HTTP_REQUEST;
+import static danta.aem.Constants.CLIENT_STATISTICS_CONTENT_MODEL_SELECTORS;
 
 /**
  * This servlet returns the executing CPs for a given resource
@@ -47,21 +51,21 @@ import static danta.aem.Constants.SLING_HTTP_REQUEST;
  * @version     1.0.0
  * @since       2018-01-18
  */
-@Component
-@Service
-@Properties({
-        @Property(name = "service.description", value = "Component Statistics Content Model"),
-        @Property(name = "sling.servlet.selectors", value = CLIENT_STATISTICS_CONTENT_MODEL_SELECTORS),
-        @Property(name = "sling.servlet.extensions", value = JSON),
-        @Property(name = "sling.servlet.resourceTypes", value = "sling/servlet/default")
-})
+@Component(
+        service = Servlet.class,
+        property = {
+                "sling.servlet.extensions=" + JSON,
+                "sling.servlet.selectors=" + CLIENT_STATISTICS_CONTENT_MODEL_SELECTORS,
+                "sling.servlet.resourceTypes=sling/servlet/default",
+        }
+)
 public class StatisticsServlet
         extends SlingSafeMethodsServlet {
 
     @Reference
     private ContentModelFactoryService contentModelFactoryService;
 
-    @Reference(cardinality = ReferenceCardinality.MANDATORY_UNARY, policy = ReferencePolicy.STATIC)
+    @Reference(cardinality = ReferenceCardinality.MANDATORY, policy = ReferencePolicy.STATIC)
     private ConfigurationProvider configurationProvider;
 
     @Reference
@@ -82,6 +86,7 @@ public class StatisticsServlet
                 ExecutionContextImpl executionContext = new ExecutionContextImpl();
                 executionContext.put(SLING_HTTP_REQUEST, request);
                 executionContext.put(ENGINE_RESOURCE, resource.getResourceType());
+                executionContext.put(CONFIGURATION_PROVIDER, configurationProvider);
 
                 List<String> currentProcessorChain = contextProcessorEngine.execute(executionContext, contentModel);
 

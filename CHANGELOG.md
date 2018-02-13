@@ -1,6 +1,7 @@
 # Changelog
 
 ### Unreleased
+- Changed Felix SCR annotations by the official OSGi Declarative Services annotations.
 - Updated implementation of the template content model to extend AbstractTemplateContentModelImpl in the Core project.
 - Updated vanity URL property in page and lists contexts.
 

@@ -20,15 +20,19 @@ package danta.aem.contextprocessors;
 
 import com.google.common.collect.Sets;
 import danta.aem.templating.TemplateContentModelImpl;
+import danta.api.ContextProcessor;
 import danta.api.ExecutionContext;
 import danta.api.configuration.Configuration;
+import danta.api.configuration.ConfigurationProvider;
 import danta.api.configuration.Mode;
 import danta.api.exceptions.ProcessException;
 import danta.core.contextprocessors.AbstractCheckComponentCategoryContextProcessor;
 import org.apache.commons.lang3.StringUtils;
-import org.apache.felix.scr.annotations.Component;
-import org.apache.felix.scr.annotations.Service;
+import org.osgi.service.component.annotations.Component;
 import org.apache.sling.api.SlingHttpServletRequest;
+import org.osgi.service.component.annotations.Reference;
+import org.osgi.service.component.annotations.ReferenceCardinality;
+import org.osgi.service.component.annotations.ReferencePolicy;
 
 import java.util.Collection;
 import java.util.Collections;
@@ -76,10 +80,12 @@ import static danta.core.Constants.*;
  * @version     1.0.0
  * @since       2014-09-04
  */
-@Component
-@Service
+@Component(service = ContextProcessor.class)
 public class AddStylingContextProcessor
         extends AbstractCheckComponentCategoryContextProcessor<TemplateContentModelImpl> {
+
+    @Reference(cardinality = ReferenceCardinality.MANDATORY, policy = ReferencePolicy.STATIC)
+    protected ConfigurationProvider configurationProvider;
 
     private static final Set<String> ANY_OF = Collections.unmodifiableSet(Sets.newHashSet(STYLING_CATEGORY));
 

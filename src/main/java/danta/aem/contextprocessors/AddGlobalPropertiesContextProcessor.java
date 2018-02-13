@@ -22,11 +22,11 @@ import com.google.common.collect.Sets;
 import danta.aem.templating.TemplateContentModelImpl;
 import danta.aem.util.PropertyUtils;
 import danta.aem.util.ResourceUtils;
+import danta.api.ContextProcessor;
 import danta.api.ExecutionContext;
 import danta.api.exceptions.ProcessException;
 import danta.core.contextprocessors.AbstractCheckComponentCategoryContextProcessor;
-import org.apache.felix.scr.annotations.Component;
-import org.apache.felix.scr.annotations.Service;
+import org.osgi.service.component.annotations.Component;
 import org.apache.sling.api.SlingHttpServletRequest;
 import org.apache.sling.api.resource.Resource;
 import org.apache.sling.api.resource.ResourceResolver;
@@ -46,8 +46,7 @@ import static danta.aem.Constants.SLING_HTTP_REQUEST;
  * @version     1.0.0
  * @since       2014-09-04
  */
-@Component
-@Service
+@Component(service = ContextProcessor.class)
 public class AddGlobalPropertiesContextProcessor
         extends AbstractCheckComponentCategoryContextProcessor<TemplateContentModelImpl> {
 

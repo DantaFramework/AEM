@@ -29,13 +29,18 @@ import danta.aem.assets.AssetPathService;
 import danta.aem.templating.TemplateContentModelImpl;
 import danta.aem.util.GeneralRequestObjects;
 import danta.aem.util.PageUtils;
+import danta.api.ContextProcessor;
 import danta.api.ExecutionContext;
 import danta.api.configuration.Configuration;
+import danta.api.configuration.ConfigurationProvider;
 import danta.api.configuration.Mode;
 import danta.api.exceptions.ProcessException;
 import danta.core.contextprocessors.AbstractCheckComponentCategoryContextProcessor;
 import org.apache.commons.lang3.StringUtils;
-import org.apache.felix.scr.annotations.*;
+import org.osgi.service.component.annotations.Component;
+import org.osgi.service.component.annotations.Reference;
+import org.osgi.service.component.annotations.ReferencePolicy;
+import org.osgi.service.component.annotations.ReferenceCardinality;
 import org.apache.sling.api.SlingHttpServletRequest;
 import org.apache.sling.api.resource.Resource;
 import org.apache.sling.api.resource.ResourceResolver;
@@ -60,14 +65,16 @@ import static danta.aem.util.PageUtils.getVanityURLs;
  * @version     1.0.0
  * @since       2014-09-04
  */
-@Component
-@Service
+@Component(service = ContextProcessor.class)
 public class AddPagePropertiesContextProcessor
         extends AbstractCheckComponentCategoryContextProcessor<TemplateContentModelImpl> {
 
     private static final Set<String> ANY_OF = Collections.unmodifiableSet(Sets.newHashSet(PAGE_CATEGORY));
 
-    @Reference(cardinality = ReferenceCardinality.MANDATORY_UNARY, policy = ReferencePolicy.STATIC)
+    @Reference(cardinality = ReferenceCardinality.MANDATORY, policy = ReferencePolicy.STATIC)
+    protected ConfigurationProvider configurationProvider;
+
+    @Reference(cardinality = ReferenceCardinality.MANDATORY, policy = ReferencePolicy.STATIC)
     protected AssetPathService assetPathService;
 
     @Override

@@ -20,13 +20,13 @@ package danta.aem.contextprocessors;
 
 import com.google.common.collect.Sets;
 import danta.aem.templating.TemplateContentModelImpl;
+import danta.api.ContextProcessor;
 import danta.api.ExecutionContext;
 import danta.api.exceptions.ProcessException;
 import danta.core.contextprocessors.AbstractCheckComponentCategoryContextProcessor;
 import org.apache.commons.codec.digest.DigestUtils;
 import org.apache.commons.lang3.StringUtils;
-import org.apache.felix.scr.annotations.Component;
-import org.apache.felix.scr.annotations.Service;
+import org.osgi.service.component.annotations.Component;
 import org.apache.sling.api.SlingHttpServletRequest;
 import org.apache.sling.api.resource.Resource;
 
@@ -48,8 +48,7 @@ import static danta.core.Constants.XK_CONTENT_ID_CP;
  * @version     1.0.0
  * @since       2013-11-04
  */
-@Component
-@Service
+@Component(service = ContextProcessor.class)
 public class AddAllResourceContentPropertiesContextProcessor
         extends AbstractCheckComponentCategoryContextProcessor<TemplateContentModelImpl> {
 

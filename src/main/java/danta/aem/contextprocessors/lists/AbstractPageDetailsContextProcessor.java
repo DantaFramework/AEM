@@ -19,17 +19,12 @@
 package danta.aem.contextprocessors.lists;
 
 import com.day.cq.wcm.api.Page;
-import danta.aem.assets.AssetPathService;
 import danta.aem.util.PageUtils;
-import danta.aem.util.ResourceUtils;
 import danta.api.TemplateContentModel;
-import danta.api.configuration.Configuration;
 import org.apache.commons.lang3.StringUtils;
-import org.apache.felix.scr.annotations.Component;
-import org.apache.felix.scr.annotations.Reference;
-import org.apache.felix.scr.annotations.Service;
 import org.apache.sling.api.resource.Resource;
 
+import java.util.ArrayList;
 import java.util.Collection;
 import java.util.HashMap;
 import java.util.Map;
@@ -46,15 +41,10 @@ import static danta.aem.util.PageUtils.getVanityURLs;
  * @version     1.0.0
  * @since       2014-08-16
  */
-@Component(componentAbstract = true)
-@Service
 public abstract class AbstractPageDetailsContextProcessor extends
         AbstractItemListContextProcessor<TemplateContentModel> {
 
-    @Reference
-    protected AssetPathService assetPathService;
-
-    protected Map<String, Object> extractBasicPageDetails(Page page, Resource componentResource, String currentPage) throws Exception{
+    protected Map<String, Object> extractBasicPageDetails(Page page, Resource componentResource, String currentPage) throws Exception {
         Map<String, Object> pageDetails = new HashMap<>();
         if(null != page) {
             pageDetails.put(TITLE, page.getTitle());
@@ -70,7 +60,7 @@ public abstract class AbstractPageDetailsContextProcessor extends
             if(null != navigationTitle) {
                 pageDetails.put(NAVIGATION_TITLE, navigationTitle);
             }
-            String pageImagePath = assetPathService.getPageImagePath(page, componentResource);
+            String pageImagePath = pageImagePath(page, componentResource);
             if (StringUtils.isNotEmpty(pageImagePath)) {
                 pageDetails.put(IMAGE_PATH, pageImagePath);
             }
@@ -86,13 +76,20 @@ public abstract class AbstractPageDetailsContextProcessor extends
         }
 
         //Extra properties
-        Configuration configuration = configurationProvider.getFor(componentResource.getResourceType());
-        Collection<String> extraPropertyNames = configuration.asStrings(EXTRA_LIST_PROPERTIES_CONFIG_KEY);
+        Collection<String> extraPropertyNames = getExtraPropertyNames(componentResource);
         for (String extraPropertyName : extraPropertyNames) {
             pageDetails.put(extraPropertyName, PageUtils.getPageProperty(page, extraPropertyName));
         }
 
         return pageDetails;
+    }
+
+    protected Collection<String> getExtraPropertyNames(Resource componentResource) throws Exception {
+        return new ArrayList<>();
+    }
+
+    protected String pageImagePath(Page page, Resource componentResource) throws Exception {
+        return "";
     }
 
 }

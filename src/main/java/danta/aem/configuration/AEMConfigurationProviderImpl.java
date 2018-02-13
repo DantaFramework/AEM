@@ -29,7 +29,12 @@ import danta.core.util.OSGiUtils;
 import net.minidev.json.JSONObject;
 import net.minidev.json.JSONStyle;
 import org.apache.commons.lang3.StringUtils;
-import org.apache.felix.scr.annotations.*;
+import org.osgi.service.component.annotations.Component;
+import org.osgi.service.component.annotations.Reference;
+import org.osgi.service.component.annotations.Activate;
+import org.osgi.service.component.annotations.Deactivate;
+import org.osgi.service.component.annotations.ReferenceCardinality;
+import org.osgi.service.component.annotations.ReferencePolicy;
 import org.apache.sling.api.resource.Resource;
 import org.apache.sling.api.resource.ResourceResolver;
 import org.apache.sling.api.resource.ResourceResolverFactory;
@@ -57,8 +62,10 @@ import static danta.aem.Constants.APPS_ROOT;
  * @version     1.0.0
  * @since       2014-03-17
  */
-@Component(immediate = true)
-@Service({EventListener.class, ConfigurationProvider.class})
+@Component(
+        immediate = true,
+        service = {EventListener.class, ConfigurationProvider.class}
+)
 public class AEMConfigurationProviderImpl
         implements ConfigurationProvider<String>, EventListener {
 
@@ -69,7 +76,7 @@ public class AEMConfigurationProviderImpl
     private static final Map<String, Object> RESOURCE_RESOLVER_PARAMS =
             Collections.unmodifiableMap(Collections.singletonMap(ResourceResolverFactory.SUBSERVICE, CONFIG_SERVICE));
 
-    @Reference(cardinality = ReferenceCardinality.MANDATORY_UNARY, policy = ReferencePolicy.STATIC)
+    @Reference(cardinality = ReferenceCardinality.MANDATORY, policy = ReferencePolicy.STATIC)
     private ResourceResolverFactory resourceResolverFactory;
 
     @Reference

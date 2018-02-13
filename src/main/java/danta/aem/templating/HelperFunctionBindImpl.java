@@ -18,8 +18,12 @@
 
 package danta.aem.templating;
 
-import org.apache.felix.scr.annotations.*;
 import org.osgi.service.component.ComponentContext;
+import org.osgi.service.component.annotations.Component;
+import org.osgi.service.component.annotations.Reference;
+import org.osgi.service.component.annotations.ReferencePolicy;
+import org.osgi.service.component.annotations.Activate;
+import org.osgi.service.component.annotations.ReferenceCardinality;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -31,14 +35,13 @@ import java.util.List;
  * @version     1.0.0
  * @since       2016-10-10
  */
-@Component
-@Service
+@Component(service = HelperFunctionBind.class)
 public class HelperFunctionBindImpl
         implements HelperFunctionBind {
 
     protected ComponentContext componentContext;
 
-    @Reference(cardinality = ReferenceCardinality.OPTIONAL_MULTIPLE, bind = "bindHelperFunction", unbind = "unbindHelperFunction", referenceInterface = HelperFunction.class, policy = ReferencePolicy.DYNAMIC)
+    @Reference(cardinality = ReferenceCardinality.MULTIPLE, bind = "bindHelperFunction", unbind = "unbindHelperFunction", service = HelperFunction.class, policy = ReferencePolicy.DYNAMIC)
     private List<HelperFunction> helpers = new ArrayList<>();
 
     public List<HelperFunction> getHelpers()

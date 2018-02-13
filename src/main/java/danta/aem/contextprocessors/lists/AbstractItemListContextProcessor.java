@@ -22,8 +22,6 @@ import com.google.common.collect.Sets;
 import danta.api.ContentModel;
 import danta.core.contextprocessors.AbstractCheckComponentCategoryContextProcessor;
 import danta.core.util.NumberUtils;
-import org.apache.felix.scr.annotations.Component;
-import org.apache.felix.scr.annotations.Service;
 
 import java.util.Collections;
 import java.util.Set;
@@ -38,8 +36,6 @@ import static danta.Constants.LIST_CATEGORY;
  * @version     1.0.0
  * @since       2014-08-16
  */
-@Component(componentAbstract = true)
-@Service
 public abstract class AbstractItemListContextProcessor<C extends ContentModel>
         extends AbstractCheckComponentCategoryContextProcessor<C>
         implements ListContextProcessor<C> {

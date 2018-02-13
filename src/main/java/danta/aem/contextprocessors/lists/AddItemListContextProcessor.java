@@ -19,12 +19,12 @@
 package danta.aem.contextprocessors.lists;
 
 import com.google.common.collect.Lists;
+import danta.api.ContextProcessor;
 import danta.api.ExecutionContext;
 import danta.api.TemplateContentModel;
 import danta.api.exceptions.ProcessException;
 import net.minidev.json.JSONValue;
-import org.apache.felix.scr.annotations.Component;
-import org.apache.felix.scr.annotations.Service;
+import org.osgi.service.component.annotations.Component;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -38,8 +38,7 @@ import static danta.Constants.*;
  * @version     1.0.0
  * @since       2014-08-16
  */
-@Component
-@Service
+@Component(service = ContextProcessor.class)
 public class AddItemListContextProcessor
         extends AbstractItemListContextProcessor<TemplateContentModel> {
 

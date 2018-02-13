@@ -25,20 +25,24 @@ import danta.api.configuration.ConfigurationProvider;
 import danta.api.configuration.Mode;
 import net.minidev.json.JSONObject;
 import org.apache.commons.codec.digest.DigestUtils;
-import org.apache.felix.scr.annotations.*;
+import org.osgi.service.component.annotations.Component;
+import org.osgi.service.component.annotations.Reference;
+import org.osgi.service.component.annotations.ReferenceCardinality;
+import org.osgi.service.component.annotations.ReferencePolicy;
 import org.apache.sling.api.SlingHttpServletRequest;
 import org.apache.sling.api.SlingHttpServletResponse;
 import org.apache.sling.api.resource.Resource;
 import org.apache.sling.api.servlets.SlingSafeMethodsServlet;
 
+import javax.servlet.Servlet;
 import javax.servlet.ServletException;
 import java.io.IOException;
 import java.io.PrintWriter;
 import java.util.Collection;
 
 import static danta.Constants.*;
-import static danta.aem.Constants.CLIENT_COMPONENT_CONTENT_MODEL_SELECTORS;
 import static danta.core.Constants.*;
+import static danta.aem.Constants.CLIENT_COMPONENT_CONTENT_MODEL_SELECTORS;
 
 /**
  * This is a servlet used to turns component content model to json servlet
@@ -47,21 +51,21 @@ import static danta.core.Constants.*;
  * @version     1.0.0
  * @since       2013-04-17
  */
-@Component
-@Service
-@Properties({
-        @Property(name = "service.description", value = "Component Content Model to JSON Servlet"),
-        @Property(name = "sling.servlet.selectors", value = CLIENT_COMPONENT_CONTENT_MODEL_SELECTORS),
-        @Property(name = "sling.servlet.extensions", value = JSON),
-        @Property(name = "sling.servlet.resourceTypes", value = "sling/servlet/default")
-})
+@Component(
+        service = Servlet.class,
+        property = {
+                "sling.servlet.extensions=" + JSON,
+                "sling.servlet.selectors=" + CLIENT_COMPONENT_CONTENT_MODEL_SELECTORS,
+                "sling.servlet.resourceTypes=sling/servlet/default",
+        }
+)
 public class ComponentContentModelToJSONServlet
         extends SlingSafeMethodsServlet {
 
     @Reference
     private ContentModelFactoryService contentModelFactoryService;
 
-    @Reference(cardinality = ReferenceCardinality.MANDATORY_UNARY, policy = ReferencePolicy.STATIC)
+    @Reference(cardinality = ReferenceCardinality.MANDATORY, policy = ReferencePolicy.STATIC)
     private ConfigurationProvider configurationProvider;
 
     @Override
