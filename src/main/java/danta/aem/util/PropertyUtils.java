@@ -25,11 +25,13 @@ import danta.core.util.ObjectUtils;
 import net.minidev.json.JSONObject;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.sling.api.resource.Resource;
+import org.apache.sling.jcr.resource.internal.helper.LazyInputStream;
 
 import javax.jcr.Node;
 import javax.jcr.Property;
 import javax.jcr.PropertyType;
 import javax.jcr.Value;
+import javax.jcr.RepositoryException;
 import java.util.*;
 
 import static danta.Constants.RESERVED_SYSTEM_NAME_PREFIXES;
@@ -332,5 +334,32 @@ public class PropertyUtils {
             return (T) value.getDate();
 
         return null;
+    }
+
+    /**
+     * Takes a value from a JCR node and turns it into a java Object of the type of the value.
+     * This method is based on the deprecated method: org.apache.sling.jcr.resource.toJavaObject
+     *
+     * @param value This is the value
+     * @return Object This is the object
+     * @throws Exception
+     */
+    public static Object toObject(Value value) throws RepositoryException {
+        switch(value.getType()) {
+            case PropertyType.BINARY:
+                return new LazyInputStream(value);
+            case PropertyType.LONG:
+                return Long.valueOf(value.getLong());
+            case PropertyType.DOUBLE:
+                return Double.valueOf(value.getDouble());
+            case PropertyType.DATE:
+                return value.getDate();
+            case PropertyType.BOOLEAN:
+                return Boolean.valueOf(value.getBoolean());
+            case PropertyType.DECIMAL:
+                return value.getDecimal();
+            default:
+                return value.getString();
+        }
     }
 }
