@@ -34,7 +34,7 @@ import org.apache.sling.api.resource.Resource;
 import org.apache.sling.api.resource.ResourceResolver;
 import org.apache.sling.api.resource.ResourceResolverFactory;
 import org.apache.sling.jcr.api.SlingRepository;
-import org.apache.sling.jcr.resource.JcrResourceUtil;
+//import org.apache.sling.jcr.resource.JcrResourceUtil;
 import org.osgi.service.component.ComponentContext;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -398,7 +398,8 @@ public class AEMConfigurationProviderImpl
             for (String paramName : names(mode)) {
                 List<Object> objs = new ArrayList<>();
                 for (Value value : valuesFor(paramName, mode)) {
-                    objs.add(JcrResourceUtil.toJavaObject(value));
+                    //value.t
+                    objs.add(ResourceUtils.toJavaObject(value));
                 }
                 Object distilledValue;
                 switch (objs.size()) {
