@@ -3,6 +3,7 @@
 ### Unreleased
 - Updated implementation of the template content model to extend AbstractTemplateContentModelImpl in the Core project.
 - Updated vanity URL property in page and lists contexts.
+- Fixed issue for debugging ClientLibs through URL parameter or HTML Library Manager configuration.
 
 ### 1.0.5
 - Changed project groupId from "danta" to "io.tikaltechnologies.danta".
