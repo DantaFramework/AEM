@@ -3,6 +3,7 @@
 ### Unreleased
 - Updated implementation of the template content model to extend AbstractTemplateContentModelImpl in the Core project.
 - Updated vanity URL property in page and lists contexts.
+- Removed deprecated references, added Value->Object method, updated references.
 
 ### 1.0.5
 - Changed project groupId from "danta" to "io.tikaltechnologies.danta".
