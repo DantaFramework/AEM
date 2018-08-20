@@ -4,6 +4,7 @@
 - Exported danta.aem.util package.
 - Updated implementation of the template content model to extend AbstractTemplateContentModelImpl in the Core project.
 - Updated vanity URL property in page and lists contexts.
+- Removed deprecated references, added Value->Object method, updated references.
 - Fixed issue for debugging ClientLibs through URL parameter or HTML Library Manager configuration.
 
 ### 1.0.5

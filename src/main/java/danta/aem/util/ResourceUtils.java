@@ -32,6 +32,8 @@ import org.apache.sling.api.resource.PersistenceException;
 import org.apache.sling.api.resource.Resource;
 import org.apache.sling.api.resource.ResourceResolver;
 import org.apache.sling.api.resource.ResourceUtil;
+import org.apache.sling.jcr.resource.JcrResourceUtil;
+import org.apache.sling.jcr.resource.internal.helper.LazyInputStream;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -39,6 +41,8 @@ import javax.jcr.Node;
 import javax.jcr.Property;
 import javax.jcr.RepositoryException;
 import javax.jcr.Value;
+import java.io.InputStream;
+import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Collections;
@@ -58,7 +62,7 @@ import static danta.aem.Constants.GLOBAL_PATH;
  */
 public class ResourceUtils {
 
-    protected static final Logger LOG = LoggerFactory.getLogger(ResourceUtil.class);
+    protected static final Logger LOG = LoggerFactory.getLogger(ResourceUtils.class);
 
     /**
      * Forbid instantiation
@@ -375,5 +379,65 @@ public class ResourceUtils {
             LOG.error(ERROR, e);
         }
         return isPropertyMultiple;
+    }
+
+    public static Object toJavaObject(Property property) throws RepositoryException {
+        if (property.isMultiple()) {
+            Value[] values = property.getValues();
+            Object firstValue = values.length > 0 ? toJavaObject(values[0]) : null;
+            Object result;
+            if (firstValue instanceof Boolean) {
+                result = new Boolean[values.length];
+            } else if (firstValue instanceof Calendar) {
+                result = new Calendar[values.length];
+            } else if (firstValue instanceof Double) {
+                result = new Double[values.length];
+            } else if (firstValue instanceof Long) {
+                result = new Long[values.length];
+            } else if (firstValue instanceof BigDecimal) {
+                result = new BigDecimal[values.length];
+            } else if (firstValue instanceof InputStream) {
+                result = new Object[values.length];
+            } else {
+                result = new String[values.length];
+            }
+
+            for(int i = 0; i < values.length; ++i) {
+                Value value = values[i];
+                if (value != null) {
+                    ((Object[])result)[i] = toJavaObject(value);
+                }
+            }
+
+            return result;
+        } else {
+            return toJavaObject(property.getValue());
+        }
+    }
+
+    public static Object toJavaObject(Value value) throws RepositoryException {
+        switch(value.getType()) {
+            case 0:
+            case 1:
+            case 7:
+            case 8:
+            case 9:
+            case 10:
+            case 11:
+            default:
+                return value.getString();
+            case 2:
+                return new LazyInputStream(value);
+            case 3:
+                return value.getLong();
+            case 4:
+                return value.getDouble();
+            case 5:
+                return value.getDate();
+            case 6:
+                return value.getBoolean();
+            case 12:
+                return value.getDecimal();
+        }
     }
 }
