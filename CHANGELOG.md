@@ -1,6 +1,7 @@
 # Changelog
 
 ### Unreleased
+- Exported danta.aem.util package.
 - Updated implementation of the template content model to extend AbstractTemplateContentModelImpl in the Core project.
 - Updated vanity URL property in page and lists contexts.
 

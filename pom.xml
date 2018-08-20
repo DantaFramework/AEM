@@ -54,6 +54,7 @@
                             danta.aem.assets,
                             danta.aem.contextprocessors.*,
                             danta.aem.services,
+                            danta.aem.util,
                             danta.aem
                         </Export-Package>
                         <Embed-Dependency>sling-query</Embed-Dependency>
