@@ -140,6 +140,7 @@ public class ClientLibraryUtil {
      * @return void
      **/
     private void buildJsIncludes(List<ClientLibrary> jsLibs, StringBuffer buffer) {
+        String debugClientLibs = this.getDebugClientLibs();
         for (ClientLibrary lib : jsLibs) {
             LOG.debug("JS LIB : " + lib.getPath());
             freshenLibrary(LibraryType.JS, lib.getPath());
@@ -150,6 +151,7 @@ public class ClientLibraryUtil {
             try {
                 buffer.append("<script src=\"");
                 buffer.append(path + ".js");
+                buffer.append(debugClientLibs);
                 buffer.append("\"></script>\n");
             } catch (Exception e) {
                 LOG.error("Caught exception generating library path", e);
@@ -167,6 +169,7 @@ public class ClientLibraryUtil {
      * @return void
      **/
     protected void buildCssIncludes(List<ClientLibrary> cssLibs, StringBuffer buffer) {
+        String debugClientLibs = this.getDebugClientLibs();
         for (ClientLibrary lib : cssLibs) {
             LOG.debug("CSS LIB : " + lib.getPath());
             freshenLibrary(LibraryType.CSS, lib.getPath());
@@ -177,6 +180,7 @@ public class ClientLibraryUtil {
             try {
                 buffer.append("<link rel=\"stylesheet\" href=\"");
                 buffer.append(path + ".css");
+                buffer.append(debugClientLibs);
                 buffer.append("\" type=\"text/css\"");
                 buffer.append(buildMediaAttribute());
                 buffer.append(" / >\n");
@@ -185,6 +189,38 @@ public class ClientLibraryUtil {
             }
 
         }
+    }
+
+    /**
+     * Private function that checks the slingRequest parameters for "debugClientLibs",
+     * if it exists and its true, then it returns a text to add in the css/js include.
+     * It also takes into account if the debug option is enabled in the conf of the HTML Library Manager
+     * in the system console.
+     * This is to mantain the AEM behavior for debuggin clientlibs.
+     * @return
+     */
+    private String getDebugClientLibs(){
+        String postInclude = "";
+        boolean debugEnabled = false;
+        final String param = "debugClientLibs";
+
+        LOG.debug("----------------- " + this.slingRequest.getParameter(param));
+
+        if( this.slingRequest.getParameter(param) != null ) {
+            if ( this.slingRequest.getParameter(param).equals("true") ) {
+                debugEnabled = true;
+            }
+        }
+
+        if ( this.htmlLibraryManager.isDebugEnabled() ) {
+            debugEnabled = true;
+        }
+
+        if (debugEnabled) {
+            postInclude = "?debug=true";
+        }
+
+        return postInclude;
     }
 
     /**
