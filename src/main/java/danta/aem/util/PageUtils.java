@@ -26,7 +26,6 @@ import org.apache.sling.api.resource.ValueMap;
 
 import java.util.ArrayList;
 import java.util.Arrays;
-import java.util.Map;
 
 import static danta.Constants.BLANK;
 import static danta.aem.Constants.SLING_VANITY_PATH;
@@ -81,16 +80,16 @@ public class PageUtils {
     }
 
     /**
-     * Get keywords from a page.
+     * Get keywords from the cq:tags Object
      *
-     * @param pageContent This is a map of page content
+     * @param objProperty This is the cq:tags Object
      * @param tm This is a Tag Manager instance
      * @return keywords This is the meta keywords set on the page
      */
-    public static String getKeywords(Map<String, Object> pageContent, TagManager tm) {
+    public static String getKeywords(Object objProperty, TagManager tm) {
         String keywords = "";
-        if (pageContent.get("cq:tags") != null) {
-            ArrayList<?> tags = (ArrayList<?>) pageContent.get("cq:tags");
+        if (objProperty != null) {
+            ArrayList<?> tags = (ArrayList<?>) objProperty;
             if (tags != null) {
                 for (Object obj : tags) {
                     String value = obj.toString();
@@ -132,10 +131,10 @@ public class PageUtils {
      * @param pageContent This is a map of page content
      * @return keywords This is the comma separated list of CQ tags
      */
-    public static String getTags(Map<String, Object> pageContent) {
+    public static String getTags(Object tagsObj) {
         String keywords = "";
-        if (pageContent.get("cq:tags") != null) {
-            ArrayList<?> tags = (ArrayList<?>) pageContent.get("cq:tags");
+        if (tagsObj != null) {
+            ArrayList<?> tags = (ArrayList<?>) tagsObj;
             if (tags != null) {
                 for (Object obj : tags) {
                     String value = obj.toString();

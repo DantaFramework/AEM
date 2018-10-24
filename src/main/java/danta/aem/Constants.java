@@ -45,6 +45,8 @@ public class Constants {
     public static final String JCR_DESCRIPTION = "jcr:description";
     public static final String JCR_CREATED = "jcr:created";
     public static final String ETC = "etc";
+    public static final String CQ_TEMPLATE = "cq:template";
+    public static final String CQ_TAGS = "cq:tags";
     public static final String PATH_DETAILS_LIST_PATH_PROPERTY_NAME = "path";
     public static final String PATH_DETAILS_LIST_PATHS_PROPERTY_NAME = "paths";
     //Global properties
