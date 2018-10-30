@@ -47,9 +47,12 @@ import java.util.Map;
 import java.util.Set;
 
 import static danta.Constants.*;
+import static danta.aem.Constants.CQ_TAGS;
+import static danta.aem.Constants.CQ_TEMPLATE;
 import static danta.aem.Constants.JCR_DESCRIPTION;
 import static danta.aem.Constants.SLING_HTTP_REQUEST;
 import static danta.aem.util.PropertyUtils.propsToMap;
+import static danta.aem.util.PropertyUtils.getObjectProperty;
 import static danta.core.Constants.XK_CONTAINER_CLASSES_CP;
 import static danta.aem.util.PageUtils.getVanityURLs;
 
@@ -114,12 +117,18 @@ public class AddPagePropertiesContextProcessor
                         pageContent.put(PAGE_TITLE, page.getProperties().get(PAGE_TITLE, ""));
                         pageContent.put(SUBTITLE, page.getProperties().get(SUBTITLE, ""));
                         pageContent.put(HIDE_IN_NAV, page.getProperties().get(HIDE_IN_NAV, ""));
-                        pageContent.put(KEYWORDS, PageUtils.getKeywords(pageContent, tm));
-                        pageContent.put(TAGS, PageUtils.getTags(pageContent));
+                        pageContent.put(TEMPLATE, page.getProperties().get(CQ_TEMPLATE, ""));
                         pageContent.put(WCM_MODE, GeneralRequestObjects.getWCMModeString(request));
                         pageContent.put(IS_EDIT_MODE, GeneralRequestObjects.isEditMode(request));
                         pageContent.put(IS_DESIGN_MODE, GeneralRequestObjects.isDesignMode(request));
                         pageContent.put(IS_EDIT_OR_DESIGN_MODE, GeneralRequestObjects.isEditOrDesignMode(request));
+
+                        Object tagsObj = getObjectProperty(pageContentNode.getProperties(), CQ_TAGS);
+                        if (tagsObj != null) {
+                            pageContent.put(KEYWORDS, PageUtils.getKeywords(tagsObj, tm));
+                            pageContent.put(TAGS, PageUtils.getTags(tagsObj));
+                            pageContent.put(TAGS_LIST, page.getProperties().get(CQ_TAGS, new String[]{}));
+                        }
 
                         if (designer != null) {
                             Design design = designer.getDesign(page);

@@ -158,6 +158,26 @@ public class PropertyUtils {
     }
 
     /**
+     * Takes an Iterator of properties, search for the name and returns the Object representation of the property
+     *
+     * @param properties This is a list of Iterator Properties
+     * @param name The name of the property you want to get
+     * @return An Objet with the property extrated by the distill function otherwise retun null
+     * @throws Exception
+     */
+    public static Object getObjectProperty(Iterator properties, String name)
+            throws Exception {
+        while (properties.hasNext()) {
+            Property property = (Property) properties.next();
+            String propertyName = property.getName();
+            if (name.equals(propertyName)){
+                return distill(property);
+            }
+        }
+        return null;
+    }
+
+    /**
      * Takes a Collection of Property and turns it into map.
      *
      * @param properties This is a Collection of Property
