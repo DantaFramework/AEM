@@ -1,6 +1,8 @@
 # Changelog
 
 ### Unreleased
+- Updated acs-aem-commons-bundle version to 3.15.0.
+- Fixed issue with KEYWORDS and TAGS page properties. Added new TAGS_LIST property [#43](https://github.com/DantaFramework/AEM/issues/43).
 - Exported danta.aem.util package.
 - Updated implementation of the template content model to extend AbstractTemplateContentModelImpl in the Core project.
 - Updated vanity URL property in page and lists contexts.
