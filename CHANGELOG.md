@@ -1,6 +1,7 @@
 # Changelog
 
 ### Unreleased
+- Exported danta.aem.servlets package.
 - Updated acs-aem-commons-bundle version to 3.15.0.
 - Fixed issue with KEYWORDS and TAGS page properties. Added new TAGS_LIST property [#43](https://github.com/DantaFramework/AEM/issues/43).
 - Exported danta.aem.util package.
