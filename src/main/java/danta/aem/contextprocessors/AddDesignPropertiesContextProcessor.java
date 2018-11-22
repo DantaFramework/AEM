@@ -77,7 +77,7 @@ public class AddDesignPropertiesContextProcessor
             final Designer designer = resourceResolver.adaptTo(Designer.class);
             Style style = designer.getStyle(resource);
 
-            if (style.getPath() != null) {
+            if (style != null && style.getPath() != null) {
                 Resource designResource = resourceResolver.getResource(style.getPath());
                 Map<String, Object> designMap = (designResource != null) ? PropertyUtils.propsToMap(designResource) : new HashMap<String, Object>();
                 contentModel.set(DESIGN_PROPERTIES_KEY, designMap);
