@@ -1,7 +1,7 @@
 # Changelog
 
 ### Unreleased
-- No visible changes.
+- Fixed null pointer exception issue when there are no designs for a page. [#48](https://github.com/DantaFramework/AEM/issues/48)
 
 ### 1.0.6
 - Exported danta.aem.servlets package.
