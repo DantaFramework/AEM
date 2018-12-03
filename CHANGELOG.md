@@ -1,6 +1,6 @@
 # Changelog
 
-### Unreleased
+### 1.0.7
 - Fixed null pointer exception issue when there are no designs for a page. [#48](https://github.com/DantaFramework/AEM/issues/48)
 
 ### 1.0.6
