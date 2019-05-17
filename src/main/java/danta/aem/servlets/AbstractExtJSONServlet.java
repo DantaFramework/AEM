@@ -21,12 +21,12 @@ package danta.aem.servlets;
 import org.apache.felix.scr.annotations.Reference;
 import org.apache.sling.api.SlingHttpServletRequest;
 import org.apache.sling.api.SlingHttpServletResponse;
+import org.apache.sling.api.resource.ResourceResolverFactory;
 import org.apache.sling.api.servlets.SlingSafeMethodsServlet;
 import org.apache.sling.commons.json.JSONArray;
 import org.apache.sling.commons.json.JSONException;
 import org.apache.sling.commons.json.JSONObject;
 import org.apache.sling.jcr.api.SlingRepository;
-import org.apache.sling.jcr.resource.JcrResourceResolverFactory;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -50,7 +50,7 @@ public abstract class AbstractExtJSONServlet
     protected SlingRepository repository;
 
     @Reference
-    protected JcrResourceResolverFactory resourceResolverFactory;
+    protected ResourceResolverFactory resourceResolverFactory;
 
     private ThreadLocal<JSONArray> threadLocal;
 
