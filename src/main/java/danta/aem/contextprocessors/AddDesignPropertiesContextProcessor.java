@@ -1,14 +1,14 @@
 /**
  * Danta AEM Bundle
- *
+ * <p>
  * Copyright (C) 2017 Tikal Technologies, Inc. All rights reserved.
- *
+ * <p>
  * Licensed under GNU Affero General Public License, Version v3.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
- *
- *      https://www.gnu.org/licenses/agpl-3.0.txt
- *
+ * <p>
+ * https://www.gnu.org/licenses/agpl-3.0.txt
+ * <p>
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied;
@@ -44,14 +44,14 @@ import static danta.aem.Constants.SLING_HTTP_REQUEST;
 /**
  * The context processor for adding design properties to content model
  *
- * @author      palecio
- * @version     1.0.0
- * @since       2013-04-09
+ * @author palecio
+ * @version 1.0.0
+ * @since 2013-04-09
  */
 @Component
 @Service
 public class AddDesignPropertiesContextProcessor
-        extends AbstractCheckComponentCategoryContextProcessor<TemplateContentModelImpl>  {
+        extends AbstractCheckComponentCategoryContextProcessor<TemplateContentModelImpl> {
 
     private static final Set<String> ANY_OF = Collections.unmodifiableSet(Sets.newHashSet(DESIGN_CATEGORY));
 
@@ -69,21 +69,25 @@ public class AddDesignPropertiesContextProcessor
     @Override
     public void process(final ExecutionContext executionContext, final TemplateContentModelImpl contentModel)
             throws ProcessException {
+        ResourceResolver resolver = null;
         try {
             SlingHttpServletRequest request = (SlingHttpServletRequest) executionContext.get(SLING_HTTP_REQUEST);
             Resource resource = request.getResource();
-            ResourceResolver resourceResolver = request.getResourceResolver();
+            resolver = request.getResourceResolver();
 
-            final Designer designer = resourceResolver.adaptTo(Designer.class);
+            final Designer designer = resolver.adaptTo(Designer.class);
             Style style = designer.getStyle(resource);
 
             if (style != null && style.getPath() != null) {
-                Resource designResource = resourceResolver.getResource(style.getPath());
+                Resource designResource = resolver.getResource(style.getPath());
                 Map<String, Object> designMap = (designResource != null) ? PropertyUtils.propsToMap(designResource) : new HashMap<String, Object>();
                 contentModel.set(DESIGN_PROPERTIES_KEY, designMap);
             }
         } catch (Exception e) {
             throw new ProcessException(e);
+        } finally {
+            if (resolver != null)
+                resolver.close();
         }
     }
 }

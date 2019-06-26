@@ -1,14 +1,14 @@
 /**
  * Danta AEM Bundle
- *
+ * <p>
  * Copyright (C) 2017 Tikal Technologies, Inc. All rights reserved.
- *
+ * <p>
  * Licensed under GNU Affero General Public License, Version v3.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
- *
- *      https://www.gnu.org/licenses/agpl-3.0.txt
- *
+ * <p>
+ * https://www.gnu.org/licenses/agpl-3.0.txt
+ * <p>
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied;
@@ -59,9 +59,9 @@ import static danta.aem.util.PageUtils.getVanityURLs;
 /**
  * The context processor for adding page properties to content model
  *
- * @author      joshuaoransky
- * @version     1.0.0
- * @since       2014-09-04
+ * @author joshuaoransky
+ * @version 1.0.0
+ * @since 2014-09-04
  */
 @Component
 @Service
@@ -92,14 +92,15 @@ public class AddPagePropertiesContextProcessor
     @Override
     public void process(final ExecutionContext executionContext, final TemplateContentModelImpl contentModel)
             throws ProcessException {
+        ResourceResolver resolver = null;
         try {
             SlingHttpServletRequest request = (SlingHttpServletRequest) executionContext.get(SLING_HTTP_REQUEST);
             Resource resource = request.getResource();
             log.debug("for {}", resource.getPath());
             if (resource != null) {
-                ResourceResolver resourceResolver = request.getResourceResolver();
-                Designer designer = resourceResolver.adaptTo(Designer.class);
-                final PageManager pageManager = resourceResolver.adaptTo(PageManager.class);
+                resolver = request.getResourceResolver();
+                Designer designer = resolver.adaptTo(Designer.class);
+                final PageManager pageManager = resolver.adaptTo(PageManager.class);
                 final TagManager tm = (TagManager) resource.getResourceResolver().adaptTo(TagManager.class);
                 Page page = pageManager.getContainingPage(resource);
                 if (page != null) {
@@ -143,7 +144,7 @@ public class AddPagePropertiesContextProcessor
                         }
                         // add transformed path image
                         String pageImagePath = assetPathService.getPageImagePath(page, page.getContentResource());
-                        if(StringUtils.isNotEmpty(pageImagePath)){
+                        if (StringUtils.isNotEmpty(pageImagePath)) {
                             pageContent.put(IMAGE_PATH, pageImagePath);
                         }
 
@@ -168,6 +169,9 @@ public class AddPagePropertiesContextProcessor
             }
         } catch (Exception e) {
             throw new ProcessException(e);
+        } finally {
+            if (resolver != null)
+                resolver.close();
         }
     }
 }
